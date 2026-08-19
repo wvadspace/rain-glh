@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Torque &amp; Turnover — Auto Shop Simulator</title>
+<meta name="description" content="A management simulator for an independent auto repair shop: bays, tooling, technicians, service advisors, parts inventory, pricing and advertising.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <header class="top" id="header"></header>
+  <div class="main">
+    <div id="body"></div>
+    <div id="rail"></div>
+  </div>
+</div>
+<div id="modal" style="display:none"></div>
+<div id="toast" class="toast" style="display:none"></div>
+
+<script src="js/data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/ui.js"></script>
+<script>window.AutoShopUI.boot();</script>
+</body>
+</html>
