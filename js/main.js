@@ -31,6 +31,7 @@
     var s = UI.S, keep = s._rng, keepDay = s._day;
     delete s._rng; delete s._day;
     try {
+      /* Storage can be unavailable entirely in a sandboxed frame. */
       localStorage.setItem(SAVE_KEY, JSON.stringify({ state: s, details: UI.dayDetails }));
       if (!quiet) UI.toast('Saved.', 'good');
     } catch (e) {
@@ -40,9 +41,9 @@
   }
 
   function load() {
-    var raw = localStorage.getItem(SAVE_KEY);
-    if (!raw) return false;
     try {
+      var raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return false;
       var box = JSON.parse(raw);
       UI.dayDetails = box.details || [];
       start(E.rehydrate(box.state));
