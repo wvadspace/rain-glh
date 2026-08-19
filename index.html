@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Torque &amp; Tally — Auto Repair Shop Simulator</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand">
+      <div class="mark">T</div>
+      <div>
+        <h1 id="shopName">Rain Street Auto</h1>
+        <small id="dateLine">Day 1 &middot; Monday</small>
+      </div>
+    </div>
+    <div class="stats" id="headStats"></div>
+    <div class="row">
+      <button class="btn ghost sm" id="btnHelp">Help</button>
+      <button class="btn ghost sm" id="btnSave">Save</button>
+      <button class="btn ghost sm" id="btnNew">New Game</button>
+      <button class="btn primary" id="btnEnd">Open the Shop &rarr;</button>
+    </div>
+  </header>
+
+  <nav id="tabs"></nav>
+  <main><div class="wrap" id="view"></div></main>
+</div>
+<div id="modals"></div>
+<div id="toasts"></div>
+
+<script src="js/rng.js"></script>
+<script src="js/data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
