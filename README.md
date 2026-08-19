@@ -101,6 +101,17 @@ many days out you're booked.
 Everything is deterministic from the seed, so the same decisions on the same seed always
 play out identically.
 
+## Single-file build
+
+```
+node tools/build-single.js              # dist/shop-floor.html, one shareable file
+node tools/build-single.js --fragment   # body-only, for hosts with their own shell
+```
+
+Inlines the stylesheet and all seven scripts into one HTML document. The only external
+request is the Google Fonts stylesheet; the type stack degrades to a condensed system
+face if that is blocked.
+
 ## Layout
 
 ```
@@ -113,6 +124,7 @@ js/sim.js           the day simulation
 js/actions.js       everything the player can do between days
 js/ui.js            rendering and interaction
 js/main.js          bootstrap
+tools/build-single.js  bundles everything into one HTML file
 tests/sim.test.js   headless checks
 ```
 

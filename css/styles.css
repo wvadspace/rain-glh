@@ -1,4 +1,15 @@
+/*
+ * Typography is picked for the subject: Barlow Condensed is a low-contrast
+ * industrial grotesque in the family of vehicular and signage lettering, which
+ * is what shop signs, work orders and labor guides are actually set in. Barlow
+ * carries the running text, and IBM Plex Mono handles every column of money so
+ * the P&L reads like a printed invoice.
+ */
 :root {
+  --font-display: "Barlow Condensed", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Barlow", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-num: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
   --bg: #0e1116;
   --bg-2: #151a22;
   --panel: #1a212b;
@@ -26,19 +37,25 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font: 400 14.5px/1.55 var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
 
 body { min-height: 100vh; }
 
-h1, h2, h3, h4 { margin: 0; font-weight: 650; letter-spacing: -.01em; }
-h2 { font-size: 17px; }
-h3 { font-size: 14px; }
-p { margin: 0 0 8px; }
+h1, h2, h3, h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: .01em;
+  text-wrap: balance;
+}
+h2 { font-size: 20px; }
+h3 { font-size: 16px; }
+p { margin: 0 0 8px; max-width: 68ch; }
 a { color: var(--accent-2); }
 
-.mono { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
+.mono { font-family: var(--font-num); }
 .num { font-variant-numeric: tabular-nums; }
 .good { color: var(--good); }
 .bad { color: var(--bad); }
@@ -69,22 +86,39 @@ header.topbar {
 
 .brand {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
-  min-width: 210px;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  margin-right: 4px;
 }
 .brand .logo {
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: -.02em;
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.12;
+  font-weight: 700;
+  letter-spacing: .005em;
+  text-transform: uppercase;
   color: var(--accent);
 }
 .brand .date { font-size: 12px; color: var(--ink-2); }
 
-.stats { display: flex; gap: 16px; flex: 1; flex-wrap: wrap; }
-.stat { min-width: 84px; }
-.stat .k { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-3); }
-.stat .v { font-size: 16px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.stats { display: flex; gap: 14px; flex: 1; flex-wrap: wrap; min-width: 0; }
+.stat { min-width: 76px; }
+.stat .k {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--ink-3);
+}
+.stat .v {
+  font-family: var(--font-num);
+  font-size: 15px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+}
 
 .stars { letter-spacing: 1px; color: var(--warn); }
 
@@ -106,7 +140,12 @@ button.primary {
   background: linear-gradient(180deg, #ff9a52, #f5762a);
   border-color: #ff9a52;
   color: #22150a;
-  font-weight: 700;
+  font-weight: 600;
+}
+button.run {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: .07em;
 }
 button.primary:hover:not(:disabled) { background: linear-gradient(180deg, #ffab6b, #ff8438); }
 button.ghost { background: transparent; }
@@ -129,6 +168,10 @@ nav.tabs {
   z-index: 35;
 }
 nav.tabs button {
+  font-family: var(--font-display);
+  font-size: 15.5px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
@@ -183,8 +226,22 @@ main { padding: 16px; max-width: 1320px; margin: 0 auto; }
   border-radius: var(--r);
   padding: 11px 13px;
 }
-.tile .k { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-3); }
-.tile .v { font-size: 21px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.tile .k {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--ink-3);
+}
+.tile .v {
+  font-family: var(--font-num);
+  font-size: 22px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.03em;
+  margin-top: 3px;
+}
 .tile .s { font-size: 11px; color: var(--ink-2); }
 
 .row { display: flex; align-items: center; gap: 8px; }
@@ -195,7 +252,7 @@ main { padding: 16px; max-width: 1320px; margin: 0 auto; }
 .kv { display: flex; justify-content: space-between; gap: 12px; padding: 3px 0; }
 .kv + .kv { border-top: 1px dashed rgba(255, 255, 255, .05); }
 .kv .k { color: var(--ink-2); }
-.kv .v { font-variant-numeric: tabular-nums; font-weight: 600; }
+.kv .v { font-family: var(--font-num); font-size: 13px; font-variant-numeric: tabular-nums; font-weight: 500; }
 
 .bar {
   position: relative;
@@ -226,8 +283,17 @@ main { padding: 16px; max-width: 1320px; margin: 0 auto; }
 .pill.warn { border-color: #6d5c2b; color: var(--warn); }
 
 table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+td.r, th.r, td:not(:first-child) { font-variant-numeric: tabular-nums; }
+td.r { font-family: var(--font-num); font-size: 13px; }
 th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--line); }
-th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); font-weight: 600; }
+th {
+  font-family: var(--font-display);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  color: var(--ink-3);
+  font-weight: 500;
+}
 tbody tr:hover { background: rgba(255, 255, 255, .025); }
 td.r, th.r { text-align: right; }
 
@@ -247,7 +313,13 @@ label.check { display: flex; align-items: center; gap: 7px; cursor: pointer; }
 input[type=checkbox] { accent-color: var(--accent); width: 15px; height: 15px; }
 
 .field { display: flex; flex-direction: column; gap: 3px; }
-.field > .lbl { font-size: 11px; color: var(--ink-2); }
+.field > .lbl {
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--ink-2);
+}
 
 /* ------------------------------------------------------------------- cards */
 
@@ -287,7 +359,13 @@ input[type=checkbox] { accent-color: var(--accent); width: 15px; height: 15px; }
 
 .log { max-height: 300px; overflow-y: auto; }
 .log .entry { display: flex; gap: 9px; padding: 4px 0; border-bottom: 1px dashed rgba(255, 255, 255, .05); font-size: 12.5px; }
-.log .entry .d { color: var(--ink-3); min-width: 42px; font-variant-numeric: tabular-nums; }
+.log .entry .d {
+  font-family: var(--font-num);
+  font-size: 12px;
+  color: var(--ink-3);
+  min-width: 44px;
+  font-variant-numeric: tabular-nums;
+}
 .log .entry.good .t { color: var(--good); }
 .log .entry.bad .t { color: var(--bad); }
 .log .entry.warn .t { color: var(--warn); }
@@ -305,8 +383,20 @@ input[type=checkbox] { accent-color: var(--accent); width: 15px; height: 15px; }
 }
 .book .day.closed { opacity: .45; }
 .book .day.today { border-color: var(--accent); }
-.book .day .dn { font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; }
-.book .day .hrs { font-size: 13px; font-weight: 650; font-variant-numeric: tabular-nums; margin: 3px 0; }
+.book .day .dn {
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+.book .day .hrs {
+  font-family: var(--font-num);
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  margin: 3px 0;
+}
 .book .day .cars { font-size: 10px; color: var(--ink-2); }
 
 /* ------------------------------------------------------------------ modal */
@@ -374,6 +464,7 @@ input[type=checkbox] { accent-color: var(--accent); width: 15px; height: 15px; }
 .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; }
 
 .pl { font-variant-numeric: tabular-nums; }
+.pl .line > span:last-child { font-family: var(--font-num); font-size: 13px; }
 .pl .line { display: flex; justify-content: space-between; padding: 3px 0; }
 .pl .line.total { border-top: 1px solid var(--line-2); margin-top: 5px; padding-top: 6px; font-weight: 700; }
 .pl .line.sub { padding-left: 14px; color: var(--ink-2); font-size: 12.5px; }
@@ -390,4 +481,15 @@ input[type=checkbox] { accent-color: var(--accent); width: 15px; height: 15px; }
   header.topbar { position: static; }
   main { padding: 12px; }
   .book { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Keyboard users get the same affordances as mouse users. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
 }
