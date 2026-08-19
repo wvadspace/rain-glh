@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Torque &amp; Profit — Auto Repair Shop Simulator</title>
+<meta name="description" content="A day-by-day management simulator for an independent auto repair shop: bays, technicians, service advisors, parking, tooling, training, pricing and advertising.">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ===================== START SCREEN ===================== -->
+<div id="startScreen" class="screen">
+  <div class="start-card">
+    <div class="start-logo">
+      <span class="bolt">&#9881;</span>
+      <div>
+        <h1>TORQUE &amp; PROFIT</h1>
+        <p class="tag">Independent Auto Repair — Shop Management Simulator</p>
+      </div>
+    </div>
+    <p class="start-blurb">
+      You have two bays, two techs, one service advisor and a lot with eight spaces.
+      Every morning you set your labor rate, your advertising and your parts order.
+      Every day cars show up. What you can actually <em>sell</em> depends on the
+      tooling in your bays, the tickets your technicians hold, and how well the
+      counter closes. Build it into a real shop, or lose the lease trying.
+    </p>
+    <label class="field">
+      <span>Shop name</span>
+      <input id="shopNameInput" type="text" maxlength="34" placeholder="Torque &amp; Profit Auto">
+    </label>
+    <div class="start-actions">
+      <button id="btnNewGame" class="btn btn-primary btn-lg">Open The Doors</button>
+      <button id="btnContinue" class="btn btn-lg" hidden>Continue Saved Shop</button>
+    </div>
+    <p class="start-foot">Progress saves to this browser automatically after every day.</p>
+  </div>
+</div>
+
+<!-- ===================== GAME ===================== -->
+<div id="game" class="screen" hidden>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="bolt">&#9881;</span>
+      <div>
+        <div class="shop-name" id="hdrShop">Shop</div>
+        <div class="date" id="hdrDate">Day</div>
+      </div>
+    </div>
+    <div class="stats" id="hdrStats"></div>
+    <div class="top-actions">
+      <button class="btn btn-sm" data-action="save">Save</button>
+      <button class="btn btn-sm" data-action="menu">Menu</button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-tab="office">Front Office</button>
+    <button class="tab" data-tab="floor">Shop Floor</button>
+    <button class="tab" data-tab="crew">Crew</button>
+    <button class="tab" data-tab="pricing">Pricing</button>
+    <button class="tab" data-tab="marketing">Marketing</button>
+    <button class="tab" data-tab="books">The Books</button>
+    <button class="tab" data-tab="expand">Expand</button>
+    <button class="tab" data-tab="help">Manual</button>
+  </nav>
+
+  <main id="view" class="view"></main>
+
+  <footer class="actionbar">
+    <div class="actionbar-info" id="dayHint"></div>
+    <button id="btnOpenShop" class="btn btn-primary btn-lg">Open The Shop &rarr;</button>
+  </footer>
+</div>
+
+<!-- ===================== MODAL ===================== -->
+<div id="modalWrap" class="modal-wrap" hidden>
+  <div class="modal" role="dialog" aria-modal="true">
+    <header class="modal-head">
+      <h2 id="modalTitle">Title</h2>
+      <button class="modal-x" data-action="close-modal" aria-label="Close">&times;</button>
+    </header>
+    <div class="modal-body" id="modalBody"></div>
+    <footer class="modal-foot" id="modalFoot"></footer>
+  </div>
+</div>
+
+<div id="toasts" class="toasts"></div>
+
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/sim.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
