@@ -1,4 +1,12 @@
-/* Torque & Turnover — shop-floor theme */
+/* Torque & Turnover — shop-floor theme.
+ *
+ * Painted-concrete and steel neutrals (cool, slightly blue) under safety
+ * orange: the two colors you actually see standing in a service bay. Type is
+ * drawn from the same world — condensed signage lettering for headings, its
+ * upright sibling for reading, and a monospace for anything on a gauge or an
+ * invoice. Committed single theme; every color is painted explicitly so the
+ * page holds on any host background.
+ */
 :root {
   --bg: #12151a;
   --bg2: #181c23;
@@ -8,13 +16,15 @@
   --text: #dfe5ee;
   --dim: #8d97a8;
   --dimmer: #626c7d;
-  --accent: #ff8c1a;
+  --accent: #f2861b;
   --accent2: #ffb454;
   --good: #4ec98a;
   --bad: #ef6b6b;
   --warn: #f2c14e;
   --info: #5aa9e6;
-  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --display: "Barlow Condensed", "Oswald", "Arial Narrow", system-ui, sans-serif;
+  --body: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -25,7 +35,7 @@ body {
     radial-gradient(1200px 600px at 20% -10%, #1d2430 0%, transparent 60%),
     var(--bg);
   color: var(--text);
-  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font: 15px/1.55 var(--body);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -43,8 +53,8 @@ header.top {
 }
 .brand { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .brand h1 {
-  margin: 0; font-size: 19px; letter-spacing: .5px; text-transform: uppercase;
-  font-weight: 800;
+  margin: 0; font-family: var(--display); font-size: 27px; line-height: 1;
+  letter-spacing: 1.2px; text-transform: uppercase; font-weight: 700;
 }
 .brand h1 span { color: var(--accent); }
 .brand .date { color: var(--dim); font-size: 13px; font-family: var(--mono); }
@@ -65,7 +75,8 @@ nav.tabs { display: flex; gap: 2px; margin-top: 10px; flex-wrap: wrap; }
 nav.tabs button {
   background: transparent; border: 1px solid transparent; border-bottom: none;
   color: var(--dim); padding: 7px 14px; border-radius: 7px 7px 0 0; cursor: pointer;
-  font-size: 13px; font-weight: 600; letter-spacing: .3px;
+  font-family: var(--display); font-size: 16px; font-weight: 600; letter-spacing: .7px;
+  text-transform: uppercase;
 }
 nav.tabs button:hover { color: var(--text); background: #1a1f27; }
 nav.tabs button.active {
@@ -82,8 +93,8 @@ nav.tabs button.active {
   padding: 14px 16px; margin-bottom: 14px;
 }
 .panel > h2 {
-  margin: 0 0 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
-  color: var(--accent2);
+  margin: 0 0 4px; font-family: var(--display); font-size: 17px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.3px; color: var(--accent2);
 }
 .panel > .sub { color: var(--dim); font-size: 12.5px; margin: 0 0 12px; }
 
@@ -95,7 +106,10 @@ nav.tabs button.active {
 .card {
   background: var(--panel2); border: 1px solid var(--line); border-radius: 9px; padding: 12px;
 }
-.card h3 { margin: 0 0 2px; font-size: 14px; }
+.card h3 {
+  margin: 0 0 2px; font-family: var(--display); font-size: 18px; font-weight: 600;
+  letter-spacing: .4px; text-wrap: balance;
+}
 .card .note { color: var(--dim); font-size: 12.5px; margin: 4px 0 8px; }
 
 /* ---------- controls ---------- */
@@ -117,6 +131,7 @@ button.btn.sm { padding: 4px 9px; font-size: 12px; }
 }
 
 input[type="number"], input[type="text"], select {
+  font-variant-numeric: tabular-nums;
   background: #151a21; border: 1px solid var(--line); border-radius: 6px;
   padding: 6px 8px; width: 100%; font-family: var(--mono);
 }
@@ -155,6 +170,7 @@ tr.dim td { color: var(--dim); }
 .pips i.on { background: var(--accent); }
 .pips i.cert { background: var(--info); }
 
+.money, .kpi .v, td.num, th.num { font-variant-numeric: tabular-nums; }
 .money { font-family: var(--mono); }
 .pos { color: var(--good); }
 .neg { color: var(--bad); }
@@ -221,3 +237,9 @@ svg.spark { display: block; width: 100%; height: 62px; }
 details.help { margin-top: 8px; }
 details.help summary { cursor: pointer; color: var(--dim); font-size: 12.5px; }
 details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
+
+:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; border-radius: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}

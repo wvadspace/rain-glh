@@ -737,8 +737,12 @@
     var s = UI.state;
     var f = E.forecast(s);
     var total = Object.keys(s.adSpend).reduce(function (a, k) { return a + s.adSpend[k]; }, 0);
+    // Quote each channel on a normal trading day rather than today's day-of-week
+    // swing, so the numbers are something you can actually budget against.
     var leadsByKey = {};
-    f.paid.forEach(function (p) { leadsByKey[p.key] = p.leads; });
+    D.AD_CHANNELS.forEach(function (c) {
+      leadsByKey[c.key] = E.channelLeads(s, c) * f.coverageMult;
+    });
 
     var html = '<div class="panel"><h2>Advertising</h2>' +
       '<p class="sub">Every channel saturates: doubling spend never doubles calls. Fast channels ' +
@@ -762,7 +766,7 @@
           '" data-act="ad" data-key="' + c.key + '"></label>' +
         '<div class="small muted">Awareness built</div>' + bar(stock / (c.halfSpend * 2.5)) +
         '<table style="margin-top:7px">' +
-          '<tr><td class="small">Expected calls today</td><td class="num">' + num(leads, 1) + '</td></tr>' +
+          '<tr><td class="small">Expected calls per normal day</td><td class="num">' + num(leads, 1) + '</td></tr>' +
           '<tr><td class="small">Cost per call</td><td class="num">' + (cpl ? money2(cpl) : '—') + '</td></tr>' +
           '<tr><td class="small">Lead quality</td><td class="num">' + num(c.intent, 2) + '× close</td></tr>' +
           '<tr><td class="small">Est. gross profit produced</td><td class="num ' +
@@ -777,7 +781,9 @@
       '<div class="card" style="margin-top:12px"><div class="spread">' +
         '<div><b>Total daily ad spend:</b> <span class="money">' + money(total) + '</span> ' +
         '<span class="muted small">(' + money(total * 30) + '/month)</span></div>' +
-        '<div class="small muted">Paid calls expected today: ' + num(f.paidTotal, 1) + '</div>' +
+        '<div class="small muted">Paid calls on a normal day: ' + num(D.AD_CHANNELS.reduce(function (a, c) {
+          return a + E.channelLeads(s, c) * f.coverageMult;
+        }, 0), 1) + '</div>' +
       '</div></div>' +
       '<details class="help"><summary>Why the same dollar performs differently by channel</summary>' +
       '<p>Each channel produces leads on a saturation curve — the first $50 buys far more than the ' +

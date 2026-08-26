@@ -97,7 +97,8 @@
       name: opts.name || (pick(state, D.FIRST_NAMES) + ' ' + pick(state, D.LAST_NAMES)),
       tracks: tracks,
       experience: opts.experience || 1,     // 1..5, natural talent
-      salary: opts.salary || 210,           // per working day
+      // The owner works the counter for free, so 0 has to survive the default.
+      salary: opts.salary === undefined ? 210 : opts.salary,   // per working day
       morale: 0.8,
       trainingUntil: 0,
       trainingName: '',
@@ -1474,6 +1475,8 @@
     newGame: newGame,
     runDay: runDay,
     forecast: forecast,
+    channelLeads: channelLeads,
+    menuCoverage: menuCoverage,
     calendar: calendar,
     capabilities: capabilities,
     advisorCapacity: advisorCapacity,
