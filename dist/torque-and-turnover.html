@@ -254,6 +254,150 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
   * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
 
+/* ================= three-act shell ================= */
+.phases { display: flex; gap: 8px; margin-bottom: 14px; }
+.phase {
+  flex: 1; padding: 9px 14px; border-radius: 9px; border: 1px solid var(--line);
+  background: var(--panel); opacity: .48;
+}
+.phase b {
+  display: block; font-family: var(--display); font-size: 17px; letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.phase span { font-size: 11.5px; color: var(--dim); }
+.phase.done { opacity: .72; }
+.phase.done b { color: var(--good); }
+.phase.now { opacity: 1; border-color: var(--accent); box-shadow: inset 0 2px 0 var(--accent); }
+.phase.now b { color: var(--accent2); }
+
+/* ---- morning stepper ---- */
+.steprail { list-style: none; margin: 0; padding: 0; }
+.steprail li { margin-bottom: 4px; }
+.steprail button {
+  width: 100%; text-align: left; background: transparent; border: 1px solid transparent;
+  border-radius: 8px; padding: 8px 10px; cursor: pointer; display: grid;
+  grid-template-columns: 26px 1fr; gap: 2px 10px; align-items: center;
+}
+.steprail button:hover { background: #1a1f27; }
+.steprail .n {
+  grid-row: 1 / span 2; width: 26px; height: 26px; border-radius: 50%;
+  border: 1px solid var(--line); display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 12px; color: var(--dim);
+}
+.steprail .t { font-family: var(--display); font-size: 16px; letter-spacing: .6px; text-transform: uppercase; }
+.steprail .b { font-size: 11.5px; color: var(--dimmer); line-height: 1.35; }
+.steprail .done .n { background: #16281f; border-color: #2c5a44; color: var(--good); }
+.steprail .done .t { color: var(--dim); }
+.steprail .now { }
+.steprail .now button { background: var(--panel2); border-color: var(--line); }
+.steprail .now .n { background: var(--accent); border-color: var(--accent); color: #1b1206; font-weight: 700; }
+.steprail .now .t { color: var(--accent2); }
+
+.stepnav {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  margin-top: 4px; padding-bottom: 8px;
+}
+.stepnav .btn.primary { padding: 11px 22px; font-size: 15px; }
+
+/* ---- hero + coaching ---- */
+.panel.hero { background: linear-gradient(160deg, #232b36, var(--panel) 62%); }
+.hero-date {
+  font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--dimmer);
+}
+.hero-h {
+  margin: 4px 0 0; font-family: var(--display); font-size: 30px; font-weight: 700;
+  letter-spacing: .4px; text-wrap: balance;
+}
+.panel.coach { border-left: 3px solid var(--accent); }
+.coach-head { font-family: var(--display); font-size: 21px; letter-spacing: .4px; color: var(--accent2); }
+.coach-body { margin: 5px 0 10px; color: var(--text); font-size: 14px; }
+
+.issue { border-top: 1px solid var(--line); padding: 11px 0; }
+.issue:first-of-type { border-top: none; padding-top: 2px; }
+.issue b { font-family: var(--display); font-size: 17px; letter-spacing: .4px; }
+.issue p { margin: 3px 0; color: var(--dim); font-size: 13px; }
+.issue p.fix { color: var(--accent2); }
+
+/* ---- recommendation chips ---- */
+.card.decision { display: flex; flex-direction: column; }
+.rec {
+  margin-top: auto; background: #17202a; border: 1px solid #2b4a63;
+  border-radius: 8px; padding: 8px 10px;
+}
+.rec.applied { border-color: #2c5a44; background: #16281f; }
+.rec-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.rec-tag {
+  font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--info);
+  border: 1px solid #2b4a63; border-radius: 20px; padding: 1px 7px;
+}
+.rec.applied .rec-tag { color: var(--good); border-color: #2c5a44; }
+.rec-head b { font-family: var(--mono); font-size: 14px; }
+.rec-head .btn { margin-left: auto; }
+.rec-why { margin: 5px 0 0; font-size: 12px; color: var(--dim); line-height: 1.45; }
+
+/* ---- advertising posture ---- */
+.levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+@media (max-width: 700px) { .levels { grid-template-columns: repeat(2, 1fr); } }
+.levels .level {
+  background: var(--panel2); border: 1px solid var(--line); border-radius: 9px;
+  padding: 10px; cursor: pointer; text-align: left; color: var(--text);
+}
+.levels .level:hover { border-color: #48536a; }
+.levels .level.on { border-color: var(--accent); background: #2a2318; }
+.levels .level b {
+  display: block; font-family: var(--display); font-size: 17px; letter-spacing: .6px;
+  text-transform: uppercase;
+}
+.levels .level span { display: block; font-family: var(--mono); font-size: 12px; color: var(--accent2); }
+.levels .level em { display: block; font-style: normal; font-size: 11.5px; color: var(--dim); margin-top: 3px; }
+
+/* ---- the day ---- */
+.dayhead .bigclock {
+  font-family: var(--mono); font-size: 38px; font-weight: 600; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.dayhead .k { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--dimmer); }
+.playctl { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+
+.bays { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+.baycard {
+  background: var(--panel2); border: 1px solid var(--line); border-radius: 9px; padding: 11px;
+}
+.baycard.busy { border-color: var(--accent); background: #26211a; }
+.baycard.down { opacity: .5; }
+.bayname {
+  font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--dimmer);
+  margin-bottom: 4px;
+}
+.baystate { font-family: var(--display); font-size: 17px; letter-spacing: .3px; }
+.baystate.on { color: var(--accent2); }
+.baystate.idle { color: var(--dimmer); }
+.baysub { font-size: 11.5px; color: var(--dim); margin: 2px 0 6px; }
+
+.feed { list-style: none; margin: 0; padding: 0; max-height: 460px; overflow-y: auto; }
+.feed .fe {
+  display: grid; grid-template-columns: 72px 1fr; gap: 10px;
+  padding: 7px 0; border-bottom: 1px solid #232936; align-items: baseline;
+}
+.feed .ft {
+  font-family: var(--mono); font-size: 11.5px; color: var(--dimmer);
+  font-variant-numeric: tabular-nums;
+}
+.feed .fb b { display: block; font-size: 13.5px; font-weight: 600; }
+.feed .fb span { display: block; font-size: 12px; color: var(--dim); }
+.feed .fe.good .fb b { color: #9fe0bd; }
+.feed .fe.bad .fb b { color: #f0a2a2; }
+.feed .fe.warn .fb b { color: var(--warn); }
+.feed .fe.lost .fb b { color: var(--dim); font-weight: 500; }
+.feed .fe.deliver .fb b { color: var(--accent2); }
+.feed .fe.open .fb b, .feed .fe.close .fb b { color: var(--info); }
+
+/* ---- office ---- */
+.main.office { grid-template-columns: 1fr; }
+.officebar {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 14px; flex-wrap: wrap;
+}
+
 </style>
 </head>
 <body>
@@ -826,6 +970,46 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
   }
 
   /* ------------------------------------------------------------------ *
+   * The shop clock. Doors open at 7am; nothing new goes on a lift after
+   * close. Times are stored as fractional hours (13.5 = 1:30pm).
+   * ------------------------------------------------------------------ */
+  var SHOP_OPEN = 7;
+  function shopClose(state) { return 18 + (state.upgrades && state.upgrades.secondshift ? 2 : 0); }
+
+  function clock(t) {
+    var h = Math.floor(t), m = Math.round((t - h) * 60);
+    if (m >= 60) { h++; m -= 60; }
+    var ap = h >= 12 ? 'pm' : 'am';
+    var hh = h % 12; if (hh === 0) hh = 12;
+    return hh + ':' + (m < 10 ? '0' : '') + m + ap;
+  }
+  function clockRange(a, b) { return clock(a) + '–' + clock(b); }
+  function num1(v) { return (Math.round(v * 10) / 10).toFixed(1); }
+
+  /* Append an entry to the day's play-by-play. */
+  function mark(res, t, kind, title, detail, tone, extra) {
+    var e = { t: t, kind: kind, title: title, detail: detail || '', tone: tone || '' };
+    if (extra) Object.keys(extra).forEach(function (k) { e[k] = extra[k]; });
+    res.timeline.push(e);
+    return e;
+  }
+
+  /*
+   * When a car shows up. Real shops load in hard at open and trickle after
+   * lunch, which is exactly why the afternoon drop-offs roll to tomorrow.
+   */
+  function arrivalTime(state, close, earlyBird) {
+    var r = rng(state), t;
+    if (r < 0.34) t = rnd(state, 7.0, 9.0);
+    else if (r < 0.60) t = rnd(state, 9.0, 11.0);
+    else if (r < 0.80) t = rnd(state, 11.0, 13.5);
+    else if (r < 0.94) t = rnd(state, 13.5, 15.5);
+    else t = rnd(state, 15.5, 16.8);
+    t -= (earlyBird || 0);
+    return clamp(t, SHOP_OPEN, close - 0.2);
+  }
+
+  /* ------------------------------------------------------------------ *
    * Calendar helpers. Day 1 = Monday, March 2nd (year 1).
    * ------------------------------------------------------------------ */
   var MONTH_LENGTHS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -917,6 +1101,8 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
       startSeed: 0,
       day: 1,
       nextId: 1,
+      phase: 'morning',      // morning -> day -> evening
+      step: 0,               // which morning step you are on
       shopName: 'Torque & Turnover Auto',
       cash: D.FINANCE.startingCash,
       debt: 0,
@@ -1238,7 +1424,7 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
   /* ------------------------------------------------------------------ *
    * Parts handling
    * ------------------------------------------------------------------ */
-  function takeParts(state, job, res) {
+  function takeParts(state, job, res, when, ro) {
     var need = job.parts, k;
     var short = [];
     for (k in need) {
@@ -1264,6 +1450,12 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
       res.hotshotCost += cost;
       res.hotshotCount++;
       state.cash -= cost;
+      if (when !== undefined) {
+        mark(res, when, 'parts', 'Hot-shot parts run',
+          short.map(function (c) { return D.partByKey[c].name; }).join(', ') +
+          ' ran out' + (ro ? ' on ' + ro.customer + "'s car" : '') + '. Paid ' + fmtMoney(cost) +
+          ' to keep it moving.', 'warn');
+      }
     }
     var partsCost = 0;
     for (k in need) {
@@ -1281,13 +1473,13 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
     var cal = calendar(state.day);
     var res = {
       day: state.day, cal: cal, closed: cal.dow === 6,
-      opportunities: 0, presented: 0, closed: 0, sold: 0, cars: 0, turnedAwayParking: 0,
+      opportunities: 0, presented: 0, won: 0, sold: 0, cars: 0, turnedAwayParking: 0,
       turnedAwayCapacity: 0, lostCapability: 0, laborRevenue: 0, partsRevenue: 0,
       partsCost: 0, hotshotCost: 0, hotshotCount: 0, revenue: 0, grossProfit: 0,
       payroll: 0, adSpend: 0, fixed: 0, interest: 0, taxes: 0, expenses: 0, net: 0,
       billedHours: 0, actualHours: 0, bayHoursAvail: 0, bayHoursUsed: 0,
       completed: 0, carryover: 0, comebacks: 0, reviews: [], events: [],
-      newCustomers: 0, jobsDone: {}, notes: [], avgSat: 0
+      newCustomers: 0, jobsDone: {}, notes: [], avgSat: 0, timeline: []
     };
 
     // --- 1. Overnight: deliveries, training returns, construction ------
@@ -1351,23 +1543,63 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
     var caps = capabilities(state);
     var newROs = [];
     var spaceLeft = state.parking - carsOnSite(state);
+    var closeHour = shopClose(state);
+    var earlyBird = upgradeEffect(state, 'throughputStart');
 
+    var arrivals = [];
     for (var si = 0; si < sources.length; si++) {
-      var src = sources[si];
-      for (var i = 0; i < src.count; i++) {
-        if (handled >= capacity) { res.turnedAwayCapacity++; state.stats.lostNoCapacity++; continue; }
-        handled++;
-        res.presented++;
-        var closeRate = estimateCloseRate(state, src.intent);
-        if (!chance(state, closeRate)) continue;
-        res.closed++;
-        if (spaceLeft <= 0) { res.turnedAwayParking++; state.stats.lostNoParking++; continue; }
-        var ro = buildRO(state, src, caps, res);
-        if (!ro) { res.lostCapability++; state.stats.lostNoCapability++; continue; }
-        spaceLeft--;
-        newROs.push(ro);
-        res.sold++;
+      for (var i = 0; i < sources[si].count; i++) {
+        arrivals.push({ src: sources[si], t: arrivalTime(state, closeHour, earlyBird) });
       }
+    }
+    arrivals.sort(function (a, b) { return a.t - b.t; });
+
+    mark(res, SHOP_OPEN, 'open', 'Doors open',
+      state.techs.filter(function (t) { return t.trainingUntil <= state.day; }).length +
+      ' technician(s) on the schedule, ' + state.openROs.length + ' car(s) carried over.', 'info');
+
+    for (var ai = 0; ai < arrivals.length; ai++) {
+      var src = arrivals[ai].src;
+      var at = arrivals[ai].t;
+      if (handled >= capacity) {
+        res.turnedAwayCapacity++;
+        state.stats.lostNoCapacity++;
+        mark(res, at, 'lost', 'Call went to voicemail',
+          'Nobody at the counter was free to pick up.', 'bad');
+        continue;
+      }
+      handled++;
+      res.presented++;
+      var closeRate = estimateCloseRate(state, src.intent);
+      if (!chance(state, closeRate)) {
+        mark(res, at, 'lost', 'Customer shopped it elsewhere',
+          'Presented, not sold — ' + sourceName(src.key) + '.', '');
+        continue;
+      }
+      res.won++;
+      if (spaceLeft <= 0) {
+        res.turnedAwayParking++;
+        state.stats.lostNoParking++;
+        mark(res, at, 'lost', 'Turned away — no room on the lot',
+          'They said yes and you had nowhere to put the car.', 'bad');
+        continue;
+      }
+      var ro = buildRO(state, src, caps, res);
+      if (!ro) {
+        res.lostCapability++;
+        state.stats.lostNoCapability++;
+        mark(res, at, 'lost', 'Work you cannot perform',
+          'They needed something your bays or certifications do not cover.', 'bad');
+        continue;
+      }
+      ro.arrival = at;
+      spaceLeft--;
+      newROs.push(ro);
+      res.sold++;
+      mark(res, at, 'arrive', ro.customer + ' — ' + ro.jobs.map(function (j) { return j.name; }).join(' + '),
+        sourceName(src.key) + ' · ' + num1(ro.jobs.reduce(function (a, j) { return a + j.bookHours; }, 0)) +
+        ' book hours', 'good',
+        { book: ro.jobs.reduce(function (a, j) { return a + j.bookHours; }, 0), source: src.key });
     }
     // Recaptured declined work rides along as extra sold labor on existing cars.
     if (recaptured > 0 && newROs.length) {
@@ -1382,9 +1614,12 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
     state.comebacks = state.comebacks.filter(function (c) { return c.day > state.day; });
     due.forEach(function (c) {
       var job = D.jobByKey[c.jobKey];
+      var cbAt = rnd(state, 7.4, 10.5);
+      mark(res, cbAt, 'arrive', 'Comeback: ' + job.name,
+        'A car you already fixed is back. The labor is on you.', 'bad');
       state.openROs.push({
         id: 'RO' + (state.nextId++), customer: c.customer, soldDay: state.day,
-        source: 'comeback', isComeback: true, sat: 3.0, aroMult: 1,
+        source: 'comeback', isComeback: true, sat: 3.0, aroMult: 1, arrival: cbAt,
         jobs: [{ key: job.key, name: job.name + ' (comeback)', bookHours: job.bookHours * 0.6,
           remaining: job.bookHours * 0.6, parts: {}, partsCost: 0, done: false, waitingParts: false }]
       });
@@ -1398,6 +1633,12 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
     // --- 8. Deliver finished cars ---------------------------------------
     deliver(state, res, recaptured);
 
+    var closingBell = shopClose(state);
+    mark(res, closingBell, 'close', 'Doors close',
+      res.cars + ' car(s) delivered, ' + res.carryover + ' still on the lot.',
+      res.carryover > state.parking * 0.7 ? 'warn' : 'info');
+    res.timeline.sort(function (a, b) { return a.t - b.t; });
+
     // --- 9. Money --------------------------------------------------------
     payroll(state, res);
     finishFinances(state, res);
@@ -1406,6 +1647,14 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
 
     state.day++;
     return res;
+  }
+
+  function sourceName(key) {
+    if (key === 'organic') return 'Walk-in';
+    if (key === 'loyal') return 'Repeat customer';
+    if (key === 'comeback') return 'Comeback';
+    var ch = D.AD_CHANNELS.filter(function (c) { return c.key === key; })[0];
+    return ch ? ch.name.replace(/ \(.*\)/, '') : key;
   }
 
   /* Build a repair order from an opportunity. */
@@ -1493,35 +1742,60 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
   }
 
   /* Dispatch open work to bays and technicians. */
+  /*
+   * Production runs on a clock, not a pool of hours. Each bay and each
+   * technician has a "free from" time; a job cannot start before its car
+   * arrives, before the bay opens up, or before a qualified technician is
+   * free — and nothing starts after closing. That is what makes a car
+   * dropped off at 3pm roll over to tomorrow, and it is what lets the
+   * during-the-day screen replay the shop in order.
+   */
   function produce(state, res) {
-    var hoursPerBay = shiftHours(state) + upgradeEffect(state, 'throughputStart');
-    var bayHours = state.bays.map(function (b) {
-      if (b.readyDay > state.day || b.downUntil > state.day) return 0;
-      return hoursPerBay;
-    });
-    res.bayHoursAvail = bayHours.reduce(function (a, b) { return a + b; }, 0);
+    var open = SHOP_OPEN;
+    var close = shopClose(state);
 
-    var techHours = state.techs.map(function (t) {
-      if (t.trainingUntil > state.day) return 0;
-      return Math.min(t.scheduledHours, shiftHours(state));
+    var bayFree = state.bays.map(function (b) {
+      return (b.readyDay > state.day || b.downUntil > state.day) ? Infinity : open;
     });
+    var bayUsed = state.bays.map(function () { return 0; });
+    var liveBays = bayFree.filter(function (f) { return f !== Infinity; }).length;
+    // Utilization is judged against a normal staffed shift, not the whole
+    // eleven hours the building happens to be unlocked.
+    res.bayHoursAvail = liveBays * shiftHours(state);
+
+    // A technician's own shift ends when their scheduled hours run out.
+    var techEnd = state.techs.map(function (t) {
+      if (t.trainingUntil > state.day) return -Infinity;
+      return open + Math.min(t.scheduledHours, shiftHours(state));
+    });
+    var techFree = state.techs.map(function () { return open; });
     var techBilled = state.techs.map(function () { return 0; });
     var techActual = state.techs.map(function () { return 0; });
 
-    // Oldest promised work first — that is how a real dispatch board runs.
-    var queue = state.openROs.slice().sort(function (a, b) { return a.soldDay - b.soldDay; });
+    // Oldest promised work first, then by the order cars actually showed up.
+    var queue = state.openROs.slice().sort(function (a, b) {
+      return (a.soldDay - b.soldDay) || ((a.arrival || open) - (b.arrival || open));
+    });
 
     for (var qi = 0; qi < queue.length; qi++) {
       var ro = queue[qi];
+      var here = ro.soldDay < state.day ? open : (ro.arrival || open);
       for (var ji = 0; ji < ro.jobs.length; ji++) {
         var job = ro.jobs[ji];
         if (job.done) continue;
         var jobDef = D.jobByKey[job.key];
 
-        // Parts first.
+        // Parts have to be in hand before the car goes up.
         if (!job.partsTaken) {
-          var pc = takeParts(state, { parts: job.parts }, res);
-          if (pc === false) { job.waitingParts = true; continue; }
+          var pc = takeParts(state, { parts: job.parts }, res, here, ro);
+          if (pc === false) {
+            if (!job.waitingParts) {
+              job.waitingParts = true;
+              mark(res, here, 'parts', ro.customer + ' is waiting on parts',
+                job.name + ' cannot start until the shipment lands.', 'bad');
+            }
+            continue;
+          }
           job.waitingParts = false;
           job.partsTaken = true;
           job.partsCost = pc;
@@ -1529,33 +1803,52 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
 
         var guard = 0;
         while (!job.done && guard++ < 30) {
-          var bi = findBay(state, jobDef, bayHours);
+          var bi = pickBay(state, jobDef, bayFree, here, close);
           if (bi < 0) break;
-          var ti = findTech(state, jobDef, techHours);
+          var ti = pickTech(state, jobDef, techFree, techEnd, here, Math.max(here, bayFree[bi]));
           if (ti < 0) break;
           var tech = state.techs[ti];
           var bay = state.bays[bi];
+          var start = Math.max(here, bayFree[bi], techFree[ti]);
+          var stop = Math.min(close, techEnd[ti]);
+          var avail = stop - start;
+          if (avail <= 0.02) break;
+
           var rate = productionRate(tech, bay, jobDef);
           var needActual = job.remaining / rate;
-          var avail = Math.min(bayHours[bi], techHours[ti]);
           var spend = Math.min(needActual, avail);
-          if (spend <= 0.01) break;
           var progress = spend * rate;
+
           job.remaining -= progress;
-          bayHours[bi] -= spend;
-          techHours[ti] -= spend;
+          bayFree[bi] = start + spend;
+          techFree[ti] = start + spend;
+          bayUsed[bi] += spend;
           techBilled[ti] += progress;
           techActual[ti] += spend;
           res.billedHours += progress;
           res.actualHours += spend;
           res.bayHoursUsed += spend;
+
           if (job.remaining <= 0.005) {
             job.remaining = 0;
             job.done = true;
             job.techId = tech.id;
             job.bayId = bay.id;
+            job.finishedAt = start + spend;
             job.quality = qualityRoll(state, tech, bay, jobDef);
             res.jobsDone[job.key] = (res.jobsDone[job.key] || 0) + 1;
+            mark(res, job.finishedAt, 'work', tech.name + ' finished ' + job.name,
+              bay.name + ' · ' + clockRange(start, job.finishedAt) + ' · ' +
+              num1(job.bookHours) + ' hrs billed in ' + num1(spend) + ' actual',
+              job.quality === 0 ? 'warn' : '',
+              { billed: progress, bayId: bay.id, techId: tech.id, start: start,
+                end: job.finishedAt, jobName: job.name });
+          } else if (spend > 0.05) {
+            mark(res, start + spend, 'work', job.name + ' left on the lift',
+              tech.name + ' got ' + num1(progress) + ' of ' + num1(job.bookHours) +
+              ' hours into it before the day ran out.', 'warn',
+              { billed: progress, bayId: bay.id, techId: tech.id, start: start,
+                end: start + spend, jobName: job.name, partial: true });
           }
         }
       }
@@ -1571,35 +1864,46 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
       t.morale = clamp(t.morale + (techBilled[i] > 5 ? 0.012 : -0.010) - t.fatigue * 0.008, 0.2, 1);
     });
     state.bays.forEach(function (b, i) {
-      var avail = (b.readyDay > state.day || b.downUntil > state.day) ? 0 : hoursPerBay;
-      b.utilization = avail > 0 ? clamp((avail - bayHours[i]) / avail, 0, 1) : 0;
+      var span = bayFree[i] === Infinity ? 0 : shiftHours(state);
+      b.utilization = span > 0 ? clamp(bayUsed[i] / span, 0, 1) : 0;
     });
   }
 
-  function findBay(state, jobDef, bayHours) {
-    var best = -1, bestSpeed = 0;
+  /* The bay that can take this job soonest; ties go to the better-tooled one. */
+  function pickBay(state, jobDef, bayFree, earliest, close) {
+    var best = -1, bestStart = Infinity, bestSpeed = 0;
     for (var i = 0; i < state.bays.length; i++) {
-      if (bayHours[i] <= 0.01) continue;
+      if (bayFree[i] === Infinity) continue;
       var b = state.bays[i];
       if (jobDef.bays.indexOf(b.type) < 0) continue;
       var tags = bayTags(b);
       if (!jobDef.tags.every(function (t) { return tags[t]; })) continue;
+      var start = Math.max(earliest, bayFree[i]);
+      if (start >= close - 0.02) continue;
       var sp = baySpeed(b);
-      if (sp > bestSpeed) { bestSpeed = sp; best = i; }
+      if (start < bestStart - 0.01 || (Math.abs(start - bestStart) <= 0.01 && sp > bestSpeed)) {
+        bestStart = start; bestSpeed = sp; best = i;
+      }
     }
     return best;
   }
 
-  function findTech(state, jobDef, techHours) {
-    var best = -1, bestScore = -1;
+  /*
+   * The technician who can start soonest, trading a little waiting for a lot
+   * of skill: a master an hour from free beats a rookie who is free now.
+   */
+  function pickTech(state, jobDef, techFree, techEnd, earliest, bayStart) {
+    var best = -1, bestScore = Infinity;
     for (var i = 0; i < state.techs.length; i++) {
-      if (techHours[i] <= 0.01) continue;
+      if (techEnd[i] === -Infinity) continue;
       var t = state.techs[i];
       if (!jobDef.certs.every(function (c) { return t.certs.indexOf(c) >= 0; })) continue;
+      var start = Math.max(earliest, bayStart, techFree[i]);
+      if (start >= techEnd[i] - 0.02) continue;
       var skill = t.skills[jobDef.skill] || 1;
-      var score = skill * 2 + t.efficiency;
-      if (skill + 1 < jobDef.difficulty) score -= 4;   // last resort
-      if (score > bestScore) { bestScore = score; best = i; }
+      var score = start + (5 - skill) * 0.35;
+      if (skill + 1 < jobDef.difficulty) score += 2.5;   // last resort
+      if (score < bestScore) { bestScore = score; best = i; }
     }
     return best;
   }
@@ -1637,6 +1941,8 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
 
     state.openROs.forEach(function (ro) {
       var allDone = ro.jobs.every(function (j) { return j.done; });
+      var finishedAt = 0;
+      ro.jobs.forEach(function (j) { if (j.finishedAt > finishedAt) finishedAt = j.finishedAt; });
       if (!allDone) {
         // Turnaround itself is scored at delivery; this is the extra sting of
         // telling a customer their car is stuck waiting on a part.
@@ -1687,6 +1993,11 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
       res.cars++;
       res.completed++;
       state.stats.carsServed++;
+      mark(res, Math.max(finishedAt, SHOP_OPEN) + 0.25, 'deliver',
+        'Delivered to ' + ro.customer,
+        fmtMoney(labor + partsRev) + ' · ' + turnaround + ' day turnaround · satisfaction ' +
+        sat.toFixed(1) + '/5', sat >= 4.3 ? 'good' : sat <= 2.8 ? 'bad' : '',
+        { amount: labor + partsRev });
 
       // Reviews
       var reviewP = 0.16 + advisorAvg(state, 'csi') * 0.02 + (sat >= 4.7 ? 0.10 : 0) + (sat <= 2.5 ? 0.28 : 0);
@@ -1695,6 +2006,12 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
         state.reviewCount++;
         state.reputation = state.reputation + (stars - state.reputation) * (2.6 / (state.reviewCount + 12));
         res.reviews.push({ customer: ro.customer, stars: stars, sat: round2(sat) });
+        mark(res, Math.max(finishedAt, SHOP_OPEN) + 0.6, 'review',
+          stars.toFixed(1) + '-star review from ' + ro.customer,
+          stars >= 4.5 ? 'They told three friends.'
+            : stars >= 3.5 ? 'Polite, not enthusiastic.'
+              : 'This one is going to cost you.',
+          stars >= 4 ? 'good' : stars <= 2.5 ? 'bad' : '');
       }
       // Retention: happy customers become "your" customers.
       var retain = clamp((sat - 3.2) * 0.34 + advisorAvg(state, 'csi') * 0.04, -0.25, 0.55);
@@ -1799,8 +2116,10 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
     state.history.push({
       day: res.day, revenue: res.revenue, net: res.net, cars: res.cars,
       gp: res.grossProfit, billed: res.billedHours, actual: res.actualHours,
-      cash: state.cash, rep: state.reputation, sold: res.sold, closed: res.closed, presented: res.presented,
+      cash: state.cash, rep: state.reputation, sold: res.sold, won: res.won, presented: res.presented,
       aro: res.cars ? res.revenue / res.cars : 0, adSpend: res.adSpend,
+      lostCall: res.turnedAwayCapacity, lostPark: res.turnedAwayParking,
+      lostCap: res.lostCapability, comebacks: res.comebacks,
       util: res.bayHoursAvail ? res.bayHoursUsed / res.bayHoursAvail : 0
     });
     if (state.history.length > 800) state.history.shift();
@@ -1809,7 +2128,7 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
     var rev = 0, cars = 0, billed = 0, actual = 0, util = 0, closed = 0, pres = 0;
     last30.forEach(function (h) {
       rev += h.revenue; cars += h.cars; billed += h.billed; actual += h.actual;
-      util += h.util; closed += (h.closed || 0); pres += h.presented;
+      util += h.util; closed += (h.won || 0); pres += h.presented;
     });
     state.stats.revenue30 = rev / Math.max(1, last30.length) * 30;
     state.stats.aro30 = cars ? rev / cars : 0;
@@ -1910,6 +2229,7 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
     if (chosen.choice) {
       state.pendingChoice = makeChoice(state, chosen);
       res.events.push({ name: chosen.name, text: chosen.text, choice: true });
+      mark(res, SHOP_OPEN + 0.05, 'event', chosen.name, chosen.text, 'warn');
       logLine(state, chosen.name + ': ' + chosen.text, 'event');
       return;
     }
@@ -1928,6 +2248,7 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
       }
     }
     res.events.push({ name: chosen.name, text: chosen.text });
+    mark(res, SHOP_OPEN + 0.05, 'event', chosen.name, chosen.text, 'warn');
     logLine(state, chosen.name + ': ' + chosen.text, 'event');
   }
 
@@ -2265,6 +2586,10 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
     newGame: newGame,
     runDay: runDay,
     forecast: forecast,
+    clock: clock,
+    sourceName: sourceName,
+    SHOP_OPEN: SHOP_OPEN,
+    shopClose: shopClose,
     channelLeads: channelLeads,
     menuCoverage: menuCoverage,
     calendar: calendar,
@@ -2311,6 +2636,400 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
 
   root.AutoShopEngine = ENGINE;
   if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/*
+ * Torque & Turnover — the service manager who tells you what a normal
+ * number looks like.
+ *
+ * Every morning decision gets a recommended value and one plain sentence
+ * saying why, so somebody who has never run a shop can accept their way
+ * through the day and still be roughly right. None of this is required to
+ * play; it is a default, not a rail.
+ */
+(function (root) {
+  'use strict';
+
+  var D = root.AutoShopData || (typeof require === 'function' ? require('./data.js') : null);
+  var E = root.AutoShopEngine || (typeof require === 'function' ? require('./engine.js') : null);
+
+  function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
+  function money(v) { return E.fmtMoney(v); }
+
+  /* Averages over the last n recorded days. */
+  function recent(state, key, n) {
+    var h = state.history.slice(-(n || 14));
+    if (!h.length) return 0;
+    var sum = 0;
+    h.forEach(function (d) { sum += (d[key] || 0); });
+    return sum / h.length;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Pricing
+   * ------------------------------------------------------------------ */
+  function prices(state) {
+    var tol = E.priceTolerance(state);
+    var rep = state.reputation;
+
+    // Aim just under what your customers will tolerate.
+    var target = tol - 0.02;
+    if (rep < 4.0) target = Math.min(target, 1.0);        // unproven shops price at market
+    if (rep < 3.4) target = Math.min(target, 0.94);       // or a little under it
+
+    var markup = rep >= 4.4 ? 1.95 : D.TOWN.marketPartsMarkup;
+    var diagLevel = Math.max.apply(null, state.bays.map(function (b) {
+      return b.type === 'diag' ? b.toolLevel : 0;
+    }).concat([0]));
+    var diag = Math.round((D.TOWN.marketDiagFee * (1 + diagLevel * 0.06)) / 5) * 5;
+
+    // Solve the price index back to a door rate, holding the other two at
+    // their recommendations. Index = .58·labor + .32·parts + .10·diag.
+    var partsPart = 0.32 * (markup / D.TOWN.marketPartsMarkup);
+    var diagPart = 0.10 * (diag / D.TOWN.marketDiagFee);
+    var labor = D.TOWN.marketLaborRate * (target - partsPart - diagPart) / 0.58;
+    labor = clamp(Math.round(labor / 5) * 5, 110, 260);
+
+    var util = state.stats.bayUtilization;
+    var idle = util > 0 && util < 0.45 && E.carsOnSite(state) < state.parking * 0.6;
+    var coupon = idle ? 10 : 0;
+
+    var objLevel = E.advisorAvg(state, 'objection');
+    return {
+      laborRate: {
+        value: labor,
+        why: labor > D.TOWN.marketLaborRate
+          ? 'Market is ' + money(D.TOWN.marketLaborRate) + '/hr. Your rating and objection-handling ' +
+            'training support charging above it.'
+          : labor < D.TOWN.marketLaborRate
+            ? 'Market is ' + money(D.TOWN.marketLaborRate) + '/hr, but at a ' + rep.toFixed(1) +
+              ' rating you have not earned it yet. Price under the market until the reviews catch up.'
+            : 'Right at the market rate of ' + money(D.TOWN.marketLaborRate) + '/hr. ' +
+              (objLevel < 1 ? 'Objection-handling training is what lets you go higher.' : '')
+      },
+      partsMarkup: {
+        value: markup,
+        why: markup > D.TOWN.marketPartsMarkup
+          ? 'A ' + rep.toFixed(1) + ' rating buys you a little more room on parts.'
+          : 'The standard matrix. Cheap parts still carry a fat markup, expensive ones a thin one.'
+      },
+      diagFee: {
+        value: diag,
+        why: diagLevel >= 2
+          ? 'Your scan tooling is worth more than the going rate of ' + money(D.TOWN.marketDiagFee) + '.'
+          : 'The going rate in town. Charging nothing for diagnosis trains customers to expect it free.'
+      },
+      coupon: {
+        value: coupon,
+        why: coupon
+          ? 'Your bays ran ' + Math.round(util * 100) + '% full. A discount buys volume you have room for.'
+          : 'No discount. You have all the work you can handle — a coupon would just cost margin.'
+      }
+    };
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Advertising
+   *
+   * Budget is a share of expected sales, then allocated greedily to
+   * whichever channel returns the most gross profit for the next $5.
+   * ------------------------------------------------------------------ */
+  var AD_LEVELS = {
+    off: { key: 'off', name: 'Paused', pct: 0, note: 'Coast on reputation and repeat customers.' },
+    lean: { key: 'lean', name: 'Lean', pct: 0.04, note: 'About 4% of sales. Keeps the phone warm.' },
+    standard: { key: 'standard', name: 'Standard', pct: 0.07, note: 'About 7% of sales. What a healthy shop spends.' },
+    grow: { key: 'grow', name: 'Growth', pct: 0.11, note: 'About 11% of sales. Buy share; watch your capacity.' }
+  };
+
+  /* Extra leads the next dollar in this channel would buy. */
+  function marginalValue(state, ch, spend) {
+    var maxLeads = ch.maxLeads;
+    if (ch.key === 'referral') maxLeads *= clamp(0.35 + state.customerBase / 320, 0.35, 2.2);
+    if (ch.key === 'seo') maxLeads *= clamp(0.7 + state.reputation / 10, 0.7, 1.25);
+    var slope = (maxLeads / ch.halfSpend) * Math.exp(-spend / ch.halfSpend);
+    var aro = state.stats.aro30 || 460;
+    return slope * E.estimateCloseRate(state, ch.intent) * aro * ch.aro * 0.5;
+  }
+
+  function ads(state, levelKey) {
+    var level = AD_LEVELS[levelKey] || AD_LEVELS.standard;
+    var f = E.forecast(state);
+    var expectedSales = Math.max(
+      state.stats.revenue30 / 30,
+      f.opportunities * E.estimateCloseRate(state, 1) * (state.stats.aro30 || 460)
+    );
+    var budget = Math.round(expectedSales * level.pct / 5) * 5;
+
+    var spend = {};
+    D.AD_CHANNELS.forEach(function (c) { spend[c.key] = 0; });
+
+    /* Hand out the budget $5 at a time to whichever channel pays best next. */
+    function allocate(amount, eligible) {
+      var left = amount, guard = 0;
+      while (left >= 5 && guard++ < 600) {
+        var best = null, bestVal = 0;
+        D.AD_CHANNELS.forEach(function (c) {
+          if (eligible && !eligible(c)) return;
+          if (spend[c.key] >= c.halfSpend * 2.2) return;
+          var v = marginalValue(state, c, spend[c.key]);
+          if (v > bestVal) { bestVal = v; best = c; }
+        });
+        if (!best) break;
+        spend[best.key] += 5;
+        left -= 5;
+      }
+      return left;
+    }
+
+    var left = allocate(budget, null);
+
+    /*
+     * A budget under a channel's minimum buys literally nothing, so sweep
+     * those up and put the money back to work in the channels that cleared
+     * their minimum. A small budget should fund one or two channels properly
+     * rather than seven channels uselessly.
+     */
+    for (var pass = 0; pass < 4; pass++) {
+      var freed = 0;
+      D.AD_CHANNELS.forEach(function (c) {
+        if (spend[c.key] > 0 && spend[c.key] < c.minSpend) {
+          freed += spend[c.key];
+          spend[c.key] = 0;
+        }
+      });
+      if (!freed) break;
+      left = allocate(freed + left, function (c) { return spend[c.key] >= c.minSpend; }) ;
+    }
+    if (left >= 5) {
+      // Nothing cleared a minimum yet — back the single best channel outright.
+      var pick = null, pickVal = 0;
+      D.AD_CHANNELS.forEach(function (c) {
+        if (c.minSpend > left + spend[c.key]) return;
+        var v = marginalValue(state, c, spend[c.key]);
+        if (v > pickVal) { pickVal = v; pick = c; }
+      });
+      if (pick) { spend[pick.key] += left; left = 0; }
+    }
+
+    var out = { total: 0, level: level, budget: budget, channels: {} };
+    D.AD_CHANNELS.forEach(function (c) {
+      out.total += spend[c.key];
+      out.channels[c.key] = {
+        value: spend[c.key],
+        why: spend[c.key] === 0
+          ? 'Your money works harder in another channel right now.'
+          : (c.lag >= 4
+            ? 'Slow burn — it will not show up for ' + c.lag + ' days, then it compounds.'
+            : c.intent >= 1.1
+              ? 'Highest-intent traffic you can buy today.'
+              : 'Cheap reach to keep your name in front of the town.')
+      };
+    });
+    out.why = level.pct === 0
+      ? 'Nothing budgeted. Reputation and repeat customers carry the day.'
+      : money(budget) + '/day is about ' + Math.round(level.pct * 100) +
+        '% of expected sales, weighted toward whichever channel returns the most per dollar today.';
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Technician scheduling
+   * ------------------------------------------------------------------ */
+  function schedule(state) {
+    var f = E.forecast(state);
+    var wip = 0;
+    state.openROs.forEach(function (ro) {
+      ro.jobs.forEach(function (j) { if (!j.done) wip += j.remaining; });
+    });
+    var expectedCars = Math.min(f.opportunities, f.advisorCapacity) * E.estimateCloseRate(state, 1);
+    var expectedBook = expectedCars * 1.35;
+    var needBook = wip + expectedBook;
+
+    var available = state.techs.filter(function (t) { return t.trainingUntil <= state.day; });
+    var avgRate = 1;
+    if (available.length) {
+      var sum = 0;
+      available.forEach(function (t) { sum += t.efficiency; });
+      avgRate = sum / available.length;
+    }
+    var needClock = needBook / Math.max(0.5, avgRate);
+    var perTech = available.length ? needClock / available.length : 0;
+    var hours = clamp(Math.ceil(perTech), 4, E.shiftHours(state));
+
+    return {
+      value: hours,
+      needBook: needBook,
+      wip: wip,
+      expectedBook: expectedBook,
+      why: available.length === 0
+        ? 'Nobody is available — every technician you have is in training today.'
+        : Math.round(wip) + ' book hours already on the lot plus about ' + Math.round(expectedBook) +
+          ' expected in. Across ' + available.length + ' technician(s) that is roughly ' +
+          hours + ' hours each. Scheduling under it leaves work sitting; over it just pays the ' +
+          'guarantee for an empty bay.'
+    };
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Parts
+   * ------------------------------------------------------------------ */
+  function parts(state, days) {
+    var rows = E.suggestOrder(state, days || 7);
+    var prog = D.ORDER_PROGRAMS[state.orderProgram];
+    var cost = 0;
+    rows.forEach(function (r) {
+      r.cost = r.order * E.unitCostFor(state, r.cat) * prog.costMult;
+      cost += r.cost;
+      r.why = r.order === 0
+        ? 'You have enough on the shelf.'
+        : r.have === 0
+          ? 'You are out. Any job needing these pays a ' +
+            Math.round((D.HOTSHOT_MULT - 1) * 100) + '% hot-shot premium.'
+          : 'Covers about ' + (days || 7) + ' days at your current pace.';
+    });
+    return {
+      rows: rows, total: cost,
+      why: 'Sized to ' + (days || 7) + ' days of expected demand with a cushion for upsells. ' +
+        'Arrives in ' + prog.days + ' day(s) on your ' + prog.name.toLowerCase().replace(/ \(.*\)/, '') + '.'
+    };
+  }
+
+  /* ------------------------------------------------------------------ *
+   * What to fix next — ranked by what is actually costing you money.
+   * ------------------------------------------------------------------ */
+  function priorities(state) {
+    var out = [];
+    var f = E.forecast(state);
+    var aro = state.stats.aro30 || 460;
+    var days = Math.min(14, state.history.length) || 1;
+
+    var lostCall = recent(state, 'lostCall', 14);
+    var lostPark = recent(state, 'lostPark', 14);
+    var lostCap = recent(state, 'lostCap', 14);
+    var comebacks = recent(state, 'comebacks', 14);
+
+    if (lostCall >= 1) {
+      out.push({
+        key: 'advisor', severity: lostCall * aro * 0.55,
+        title: 'Calls are going to voicemail',
+        detail: Math.round(lostCall * 10) / 10 + ' a day, worth roughly ' +
+          money(lostCall * aro * 0.55) + ' of gross profit you never got to bid on.',
+        fix: 'Hire a second service advisor, buy Phone Skills training, or install shop management software.',
+        goto: 'crew'
+      });
+    }
+    if (lostPark >= 1) {
+      out.push({
+        key: 'parking', severity: lostPark * aro * 0.55,
+        title: 'The lot is full',
+        detail: Math.round(lostPark * 10) / 10 + ' cars a day turned away because there was nowhere ' +
+          'to put them.',
+        fix: 'Pave more parking — or add production so cars leave faster instead of stacking up.',
+        goto: 'upgrades'
+      });
+    }
+    if (f.coverage < 0.85) {
+      out.push({
+        key: 'coverage', severity: (1 - f.coverage) * 1400 + lostCap * aro * 0.5,
+        title: 'Your service menu has holes in it',
+        detail: 'You can perform ' + Math.round(f.coverage * 100) + '% of the work this town needs, ' +
+          'which holds your incoming calls to ' + Math.round(f.coverageMult * 100) + '% of what they could be.',
+        fix: 'Tooling upgrades and certifications open up job types. Diagnostics and A/C are usually the ' +
+          'fastest payback.',
+        goto: 'floor'
+      });
+    }
+    if (state.stats.bayUtilization > 0.88) {
+      out.push({
+        key: 'bays', severity: 900,
+        title: 'Your bays are maxed out',
+        detail: 'Bays ran ' + Math.round(state.stats.bayUtilization * 100) + '% full. More sales will ' +
+          'just stretch turnaround and cost you stars.',
+        fix: 'Build another bay, or add a technician to a bay that is standing empty part of the day.',
+        goto: 'floor'
+      });
+    }
+    if (state.stats.bayUtilization > 0 && state.stats.bayUtilization < 0.45) {
+      out.push({
+        key: 'demand', severity: 700,
+        title: 'You are paying for bays nobody is filling',
+        detail: 'Bays ran only ' + Math.round(state.stats.bayUtilization * 100) + '% full. Technicians ' +
+          'still draw their guarantee.',
+        fix: 'Put money behind advertising, or run a coupon to buy volume you have the capacity to absorb.',
+        goto: 'marketing'
+      });
+    }
+    if (comebacks >= 0.5) {
+      out.push({
+        key: 'quality', severity: comebacks * 420,
+        title: 'Cars are coming back',
+        detail: Math.round(comebacks * 10) / 10 + ' a day. Comebacks are labor you already paid for, ' +
+          'done again for free, in front of an angry customer.',
+        fix: 'Quality training, better tooling in the bay doing the work, or step up from economy parts.',
+        goto: 'crew'
+      });
+    }
+    if (state.reputation < 3.9 && state.reviewCount > 10) {
+      out.push({
+        key: 'rep', severity: (4.3 - state.reputation) * 1600,
+        title: 'Your rating is holding back every other lever',
+        detail: 'At ' + state.reputation.toFixed(2) + ' stars your traffic multiplier is ' +
+          f.repMult.toFixed(2) + '×. At 4.5 it would be about ' +
+          (0.40 + (4.5 - 2.5) * 0.36).toFixed(2) + '×.',
+        fix: 'Shorten turnaround, stop over-selling past your capacity, and buy CSI training for the counter.',
+        goto: 'crew'
+      });
+    }
+    if (state.cash < 8000) {
+      out.push({
+        key: 'cash', severity: 2000,
+        title: 'Cash is thin',
+        detail: money(state.cash) + ' on hand against roughly ' + money(E.dailyFixedCost(state)) +
+          ' a day of fixed cost before anybody gets paid.',
+        fix: 'Trim advertising, hold off on parts orders beyond a few days, and do not start construction.',
+        goto: 'upgrades'
+      });
+    }
+    if (E.priceIndex(state) < E.priceTolerance(state) - 0.10) {
+      out.push({
+        key: 'underpriced', severity: 800,
+        title: 'You are priced below what this town will pay',
+        detail: 'Your price index is ' + E.priceIndex(state).toFixed(2) + ' against a tolerance of ' +
+          E.priceTolerance(state).toFixed(2) + '. Rate increases are almost pure profit.',
+        fix: 'Raise the door rate toward the recommendation on the pricing step.',
+        goto: 'price'
+      });
+    }
+
+    out.sort(function (a, b) { return b.severity - a.severity; });
+    return out;
+  }
+
+  /* One-line coaching for the top of the morning page. */
+  function headline(state) {
+    var p = priorities(state);
+    if (!p.length) {
+      return {
+        title: 'Nothing is obviously broken',
+        detail: 'No leak is costing you real money today. Push on whichever lever you want to grow.'
+      };
+    }
+    return { title: p[0].title, detail: p[0].detail + ' ' + p[0].fix, goto: p[0].goto };
+  }
+
+  var ADVICE = {
+    prices: prices,
+    ads: ads,
+    AD_LEVELS: AD_LEVELS,
+    schedule: schedule,
+    parts: parts,
+    priorities: priorities,
+    headline: headline,
+    recent: recent
+  };
+
+  root.AutoShopAdvice = ADVICE;
+  if (typeof module !== 'undefined' && module.exports) module.exports = ADVICE;
 })(typeof window !== 'undefined' ? window : globalThis);
 
 /*
@@ -2412,15 +3131,39 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
   /* ---------------------------------------------------------------- *
    * Header
    * ---------------------------------------------------------------- */
-  function renderHeader() {
+  function renderHeader(office) {
     var s = UI.state;
     var cal = E.calendar(s.day);
+    var label = 'Day ' + s.day + ' — ' + cal.label;
+
+    /*
+     * The whole day is simulated the moment you unlock the door, so during
+     * playback the header has to be walked forward from a start-of-day
+     * snapshot — otherwise it quietly spoils the ending.
+     */
+    var cash = s.cash, debt = s.debt, rep = s.reputation, custs = s.customerBase;
     var onSite = E.carsOnSite(s);
+    if (UI.play && UI.play.snapshot) {
+      var snap = UI.play.snapshot;
+      var took = 0, gave = 0, collected = 0;
+      UI.play.res.timeline.forEach(function (e) {
+        if (e.t > UI.play.t) return;
+        if (e.kind === 'arrive') took++;
+        if (e.kind === 'deliver') { gave++; collected += e.amount || 0; }
+      });
+      cash = snap.cash + collected;
+      debt = snap.debt; rep = snap.rep; custs = snap.customers;
+      onSite = snap.onSite + took - gave;
+      label = 'Day ' + UI.play.res.day + ' — ' + UI.play.res.cal.label + ' · in progress';
+    } else if (s.phase === 'evening' && UI.lastResult) {
+      label = 'Day ' + UI.lastResult.day + ' — ' + UI.lastResult.cal.label + ' · closing out';
+    }
+
     var kpis = [
-      { k: 'Cash', v: money(s.cash), c: s.cash < 5000 ? 'bad' : s.cash < 15000 ? 'warn' : 'good' },
-      { k: 'Credit Line', v: money(s.debt) + ' / ' + money(D.FINANCE.creditLimit), c: s.debt > 40000 ? 'warn' : '' },
-      { k: 'Rating', v: '<span class="stars">' + stars(s.reputation) + '</span> ' + s.reputation.toFixed(2), c: '' },
-      { k: 'Customers', v: s.customerBase, c: '' },
+      { k: 'Cash', v: money(cash), c: cash < 5000 ? 'bad' : cash < 15000 ? 'warn' : 'good' },
+      { k: 'Credit Line', v: money(debt) + ' / ' + money(D.FINANCE.creditLimit), c: debt > 40000 ? 'warn' : '' },
+      { k: 'Rating', v: '<span class="stars">' + stars(rep) + '</span> ' + rep.toFixed(2), c: '' },
+      { k: 'Customers', v: custs, c: '' },
       { k: 'Cars On Lot', v: onSite + ' / ' + s.parking, c: onSite >= s.parking ? 'bad' : onSite > s.parking * 0.8 ? 'warn' : '' },
       { k: 'Bays', v: s.bays.length, c: '' },
       { k: 'Crew', v: s.techs.length + ' tech · ' + s.advisors.length + ' adv', c: '' },
@@ -2430,7 +3173,7 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
     return '' +
       '<div class="brand">' +
         '<h1>Torque <span>&amp;</span> Turnover</h1>' +
-        '<div class="date">Day ' + s.day + ' — ' + cal.label + '</div>' +
+        '<div class="date">' + label + '</div>' +
         '<div class="spacer"></div>' +
         '<button class="btn sm ghost" data-act="save">Save</button>' +
         '<button class="btn sm ghost" data-act="load">Load</button>' +
@@ -2440,125 +3183,27 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
       '<div class="kpis">' + kpis.map(function (k) {
         return '<div class="kpi"><div class="k">' + k.k + '</div><div class="v ' + k.c + '">' + k.v + '</div></div>';
       }).join('') + '</div>' +
-      '<nav class="tabs">' + [
+      (office ? '<nav class="tabs">' + [
         ['dash', 'Dashboard'], ['floor', 'Shop Floor'], ['crew', 'Crew & Training'],
         ['parts', 'Parts Room'], ['price', 'Pricing'], ['marketing', 'Marketing'],
         ['upgrades', 'Facility'], ['books', 'The Books']
       ].map(function (t) {
         return '<button data-act="tab" data-tab="' + t[0] + '" class="' +
-          (UI.tab === t[0] ? 'active' : '') + '">' + t[1] + '</button>';
-      }).join('') + '</nav>';
+          (office === t[0] ? 'active' : '') + '">' + t[1] + '</button>';
+      }).join('') + '</nav>' : '');
+  }
+
+  /* The running log, shown in the rail on every screen. */
+  function railLog(s) {
+    return '<div class="panel"><h2>Log</h2><div class="log">' +
+      s.log.slice(0, 40).map(function (l) {
+        return '<div class="' + l.kind + '"><b>D' + l.day + '</b>' + esc(l.text) + '</div>';
+      }).join('') + '</div></div>';
   }
 
   /* ---------------------------------------------------------------- *
    * Right rail: today's plan
    * ---------------------------------------------------------------- */
-  function alerts() {
-    var s = UI.state, out = [];
-    var onSite = E.carsOnSite(s);
-    if (s.cash < 6000) out.push(['bad', 'Cash is thin (' + money(s.cash) + '). Watch your parts orders.']);
-    if (onSite >= s.parking) out.push(['bad', 'The lot is full. You are turning cars away at the door.']);
-    else if (onSite > s.parking * 0.8) out.push(['', 'Lot is ' + pct(onSite / s.parking) + ' full. Consider paving more parking.']);
-
-    var f = E.forecast(s);
-    if (f.opportunities > f.advisorCapacity * 1.15) {
-      out.push(['', 'Expected calls (' + num(f.opportunities, 0) + ') exceed advisor capacity (' +
-        num(f.advisorCapacity, 0) + '). Those calls go to voicemail.']);
-    }
-    var techHours = s.techs.reduce(function (a, t) {
-      return a + (t.trainingUntil > s.day ? 0 : t.scheduledHours);
-    }, 0);
-    if (techHours === 0 && s.techs.length) out.push(['bad', 'Nobody is scheduled to turn a wrench today.']);
-
-    var sug = E.suggestOrder(s, 3);
-    var shortOf = sug.filter(function (x) { return x.order > 0 && x.have < x.want * 0.4; });
-    if (shortOf.length) {
-      out.push(['', 'Low stock: ' + shortOf.map(function (x) { return x.name; }).join(', ') +
-        '. Running out means paying hot-shot prices.']);
-    }
-    s.construction.forEach(function (c) {
-      out.push(['info', c.label + ' ready in ' + (c.readyDay - s.day) + ' day(s).']);
-    });
-    s.bays.forEach(function (b) {
-      if (b.downUntil > s.day) out.push(['bad', b.name + ' is down until day ' + b.downUntil + '.']);
-    });
-    s.techs.forEach(function (t) {
-      if (t.trainingUntil > s.day) out.push(['info', t.name + ' is in ' + t.trainingName + ' until day ' + t.trainingUntil + '.']);
-    });
-    if (s.coverageHint) out.push(['', s.coverageHint]);
-    return out;
-  }
-
-  function renderRail() {
-    var s = UI.state;
-    var f = E.forecast(s);
-    var cal = f.cal;
-    var closed = cal.dow === 6;
-    var al = alerts();
-
-    var sources = [
-      ['Walk-in / drive-by', f.organic],
-      ['Repeat customers', f.loyal]
-    ].concat(f.paid.filter(function (p) { return p.leads > 0.05; }).map(function (p) {
-      return [p.name.replace(/ \(.*\)/, ''), p.leads];
-    }));
-
-    var techHours = s.techs.reduce(function (a, t) {
-      return a + (t.trainingUntil > s.day ? 0 : t.scheduledHours);
-    }, 0);
-    var bayHours = s.bays.filter(function (b) {
-      return b.readyDay <= s.day && b.downUntil <= s.day;
-    }).length * E.shiftHours(s);
-
-    var html = '<div class="panel">' +
-      '<h2>' + (closed ? 'Sunday — Closed' : 'Today&rsquo;s Outlook') + '</h2>' +
-      '<p class="sub">' + cal.label + ' · ' + cal.season + '</p>';
-
-    if (closed) {
-      html += '<p class="small muted">The shop is closed. Fixed costs still run about ' +
-        money(E.dailyFixedCost(s)) + '. Use the day to plan.</p>';
-    } else {
-      html += '<table><tr><th>Expected Opportunities</th><th class="num">' + num(f.opportunities, 1) + '</th></tr>' +
-        sources.map(function (r) {
-          return '<tr class="dim"><td style="padding-left:14px">' + esc(r[0]) + '</td><td class="num">' + num(r[1], 1) + '</td></tr>';
-        }).join('') +
-        '<tr><td>Advisor capacity</td><td class="num ' + (f.advisorCapacity < f.opportunities ? 'neg' : '') + '">' +
-          num(f.advisorCapacity, 0) + '</td></tr>' +
-        '<tr><td>Est. closing ratio</td><td class="num">' + pct(f.closeRate) + '</td></tr>' +
-        '<tr><td>Labor hours available</td><td class="num">' + num(Math.min(techHours, bayHours), 0) + '</td></tr>' +
-        '<tr><td>Service menu coverage</td><td class="num">' + pct(f.coverage) + '</td></tr>' +
-        '</table>' +
-        '<p class="small muted" style="margin-top:8px">Demand factor from day of week ' +
-        num(f.dowMult, 2) + '× · season ' + num(f.monthMult, 2) + '× · reputation ' +
-        num(f.repMult, 2) + '× · events ' + num(f.eventMult, 2) + '×</p>';
-    }
-    html += '</div>';
-
-    html += '<div class="panel">' +
-      '<button class="btn primary run" data-act="runday">' +
-        (closed ? 'Skip Sunday' : 'Open The Shop') + '</button>' +
-      '<div class="row" style="margin-top:8px">' +
-        '<button class="btn ghost sm" style="flex:1" data-act="runweek">Run 6 Days</button>' +
-        '<button class="btn ghost sm" style="flex:1" data-act="runmonth">Run 30 Days</button>' +
-      '</div>' +
-      '<p class="small muted" style="margin:8px 0 0">Fast-forward keeps today&rsquo;s prices, ad budget and ' +
-      'schedule, and auto-orders parts to a 7-day target.</p>' +
-    '</div>';
-
-    if (al.length) {
-      html += '<div class="panel"><h2>Shop Notes</h2>' +
-        al.map(function (a) { return '<div class="alert ' + a[0] + '">' + esc(a[1]) + '</div>'; }).join('') +
-        '</div>';
-    }
-
-    html += '<div class="panel"><h2>Log</h2><div class="log">' +
-      s.log.slice(0, 40).map(function (l) {
-        return '<div class="' + l.kind + '"><b>D' + l.day + '</b>' + esc(l.text) + '</div>';
-      }).join('') + '</div></div>';
-
-    return html;
-  }
-
   /* ---------------------------------------------------------------- *
    * Tab: Dashboard
    * ---------------------------------------------------------------- */
@@ -3386,25 +4031,11 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
   /* ---------------------------------------------------------------- *
    * Render
    * ---------------------------------------------------------------- */
-  function render() {
-    var s = UI.state;
-    document.getElementById('header').innerHTML = renderHeader();
-    var body = { dash: tabDash, floor: tabFloor, crew: tabCrew, parts: tabParts,
-      price: tabPrice, marketing: tabMarketing, upgrades: tabUpgrades, books: tabBooks }[UI.tab];
-    document.getElementById('body').innerHTML = body ? body() : '';
-    document.getElementById('rail').innerHTML = renderRail();
-    if (s.gameOver && !UI.modal) {
-      showModal('Out Of Business — Day ' + s.gameOver.day,
-        '<p>' + esc(s.gameOver.reason) + '</p>' +
-        '<p class="muted">You served ' + s.stats.carsServed + ' cars and booked ' +
-        money(s.stats.revenueTotal) + ' in sales along the way.</p>',
-        '<button class="btn primary" data-act="newgame">Start over</button>', false);
-    }
-  }
+  function render() { root.AutoShopScreens.render(); }
 
+  /* Live-updating a slider should not blow away the field you are dragging. */
   function softRefresh() {
-    document.getElementById('header').innerHTML = renderHeader();
-    document.getElementById('rail').innerHTML = renderRail();
+    document.getElementById('header').innerHTML = renderHeader(UI.office);
   }
 
   /* ---------------------------------------------------------------- *
@@ -3429,25 +4060,30 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
       if (s.pendingChoice) break;
     }
     UI.lastResult = last || UI.lastResult;
-    render();
-    if (s.pendingChoice) choiceModal();
-    else if (last && n === 1) dayReport(last);
-    else if (last) {
-      toast('Ran ' + n + ' days. Cash ' + money(s.cash) + '.');
+    if (s.pendingChoice) { render(); choiceModal(); }
+    else {
+      render();
+      if (last) toast('Ran ' + n + ' day(s). Cash ' + money(s.cash) + '.');
     }
     save(true);
   }
 
   var ACTIONS = {
-    tab: function (el) { UI.tab = el.getAttribute('data-tab'); render(); window.scrollTo(0, 0); },
-    runday: function () { runDays(1); },
-    runweek: function () { runDays(6); },
-    runmonth: function () { runDays(30); },
     closemodal: function () { closeModal(); render(); },
     help: function () { helpModal(); },
     choice: function (el) {
       E.resolveChoice(UI.state, el.getAttribute('data-key'));
       closeModal(); render();
+    },
+    orderrec: function () {
+      var r = root.AutoShopAdvice.parts(UI.state, 7), ok = 0, fail = null;
+      r.rows.forEach(function (row) {
+        if (row.order <= 0) return;
+        var res = E.orderParts(UI.state, row.cat, row.order);
+        if (res.ok) ok++; else fail = res.msg;
+      });
+      render();
+      toast(fail || ('Ordered ' + ok + ' line(s) for ' + money(r.total) + '.'), !!fail);
     },
     order: function (el) {
       var cat = el.getAttribute('data-cat');
@@ -3585,6 +4221,14 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
     } else {
       UI.state = E.newGame();
     }
+    // Saves from before the day was split into three acts land on the morning.
+    if (!UI.state.phase) UI.state.phase = 'morning';
+    if (UI.state.step === undefined) UI.state.step = 0;
+    if (UI.state.phase === 'day') UI.state.phase = 'morning';
+
+    root.AutoShopScreens.attach(UI);
+    root.AutoShopScreens.registerActions(ACTIONS);
+
     document.addEventListener('click', onClick);
     document.addEventListener('input', onInput);
     document.addEventListener('change', onChange);
@@ -3593,9 +4237,867 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
     if (!raw) helpModal();
   }
 
+  UI.h = {
+    esc: esc, money: money, money2: money2, pct: pct, num: num, stars: stars,
+    pips: pips, bar: bar, tile: tile, spark: spark, plTable: plTable
+  };
+  UI.tabs = {
+    dash: tabDash, floor: tabFloor, crew: tabCrew, parts: tabParts,
+    price: tabPrice, marketing: tabMarketing, upgrades: tabUpgrades, books: tabBooks
+  };
+  UI.ACTIONS = ACTIONS;
+  UI.renderHeader = renderHeader;
+  UI.railLog = railLog;
+  UI.showModal = showModal;
+  UI.closeModal = closeModal;
+  UI.choiceModal = choiceModal;
+  UI.helpModal = helpModal;
+  UI.toast = toast;
+  UI.save = save;
+  UI.runDays = runDays;
+  UI.office = null;
+  UI.play = null;
+  UI.adLevel = 'standard';
+
   root.AutoShopUI = UI;
   UI.boot = boot;
   UI.render = render;
+})(window);
+
+/*
+ * Torque & Turnover — the day, in three acts.
+ *
+ *   Morning   plan the day, with a recommended value beside every input
+ *   Day       watch it play out on the shop clock, 7am to close
+ *   Evening   read the outcome and make the decisions it forces
+ *
+ * The eight detail screens still exist, demoted to an Office you drill into
+ * from whichever morning step raised the question.
+ */
+(function (root) {
+  'use strict';
+
+  var D = root.AutoShopData;
+  var E = root.AutoShopEngine;
+  var A = root.AutoShopAdvice;
+
+  var S = {};                 // this module
+  var UI = null;              // resolved at boot, once ui.js has registered
+  var h = null;               // shared render helpers
+
+  var STEPS = [
+    { key: 'brief', name: 'Brief', blurb: 'What happened, and what today looks like.' },
+    { key: 'price', name: 'Pricing', blurb: 'What you charge for an hour and for a part.' },
+    { key: 'ads', name: 'Advertising', blurb: 'How many cars come looking for you.' },
+    { key: 'parts', name: 'Parts', blurb: 'What is on the shelf when the work sells.' },
+    { key: 'crew', name: 'Crew', blurb: 'Who is here and for how long.' },
+    { key: 'open', name: 'Open Up', blurb: 'Check the plan and unlock the door.' }
+  ];
+
+  /* ---------------------------------------------------------------- *
+   * Small shared pieces
+   * ---------------------------------------------------------------- */
+
+  /* The recommendation chip that sits beside an input. */
+  function rec(text, why, action, applied) {
+    return '<div class="rec' + (applied ? ' applied' : '') + '">' +
+      '<div class="rec-head"><span class="rec-tag">Recommended</span>' +
+      '<b>' + text + '</b>' +
+      (action && !applied ? '<button class="btn sm" ' + action + '>Use it</button>'
+        : applied ? '<span class="tag ok">Set</span>' : '') +
+      '</div>' +
+      (why ? '<p class="rec-why">' + h.esc(why) + '</p>' : '') +
+      '</div>';
+  }
+
+  function stepRail(state) {
+    return '<ol class="steprail">' + STEPS.map(function (st, i) {
+      var cls = i === state.step ? 'now' : i < state.step ? 'done' : '';
+      return '<li class="' + cls + '"><button data-act="gostep" data-step="' + i + '">' +
+        '<span class="n">' + (i < state.step ? '✓' : i + 1) + '</span>' +
+        '<span class="t">' + st.name + '</span>' +
+        '<span class="b">' + st.blurb + '</span></button></li>';
+    }).join('') + '</ol>';
+  }
+
+  function stepNav(state) {
+    var last = state.step >= STEPS.length - 1;
+    return '<div class="stepnav">' +
+      (state.step > 0
+        ? '<button class="btn ghost" data-act="prevstep">← ' + STEPS[state.step - 1].name + '</button>'
+        : '<span></span>') +
+      (last
+        ? '<button class="btn primary" data-act="openshop">Open The Shop →</button>'
+        : '<button class="btn primary" data-act="nextstep">' + STEPS[state.step + 1].name + ' →</button>') +
+      '</div>';
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Morning — step 1: the brief
+   * ---------------------------------------------------------------- */
+  function stepBrief(state) {
+    var f = E.forecast(state);
+    var head = A.headline(state);
+    var last = UI.lastResult;
+    var html = '';
+
+    html += '<div class="panel hero">' +
+      '<div class="hero-date">' + f.cal.dayName + ' · ' + f.cal.monthName + ' ' + f.cal.date +
+        ' · ' + f.cal.season + '</div>' +
+      '<h2 class="hero-h">' + (f.cal.dow === 5 ? 'Saturday — half day, full overhead'
+        : f.cal.dow === 0 ? 'Monday. The weekend&rsquo;s breakdowns are calling.'
+          : 'Day ' + state.day + ' at the shop') + '</h2>' +
+      '<div class="grid g3" style="margin-top:12px">' +
+        h.tile('Cash on hand', h.money(state.cash), state.debt ? h.money(state.debt) + ' drawn on credit' : 'no debt',
+          state.cash < 6000 ? 'bad' : '') +
+        h.tile('Expected calls', h.num(f.opportunities, 0),
+          'advisors can handle ' + h.num(f.advisorCapacity, 0)) +
+        h.tile('Cars on the lot', E.carsOnSite(state) + ' / ' + state.parking,
+          state.openROs.length ? 'carried over from yesterday' : 'empty and ready') +
+      '</div></div>';
+
+    if (last && !last.closed) {
+      html += '<div class="panel"><h2>Yesterday</h2><div class="grid g3">' +
+        h.tile('Cars delivered', last.cars, h.money(last.revenue) + ' in sales') +
+        h.tile('Net profit', h.money(last.net), last.net >= 0 ? 'in the black' : 'in the red',
+          last.net >= 0 ? 'good' : 'bad') +
+        h.tile('Closing ratio', last.presented ? h.pct(last.won / last.presented) : '—',
+          last.won + ' of ' + last.presented + ' presented') +
+        '</div></div>';
+    }
+
+    html += '<div class="panel coach"><h2>What needs your attention</h2>' +
+      '<div class="coach-head">' + h.esc(head.title) + '</div>' +
+      '<p class="coach-body">' + h.esc(head.detail) + '</p>' +
+      (head.goto ? '<button class="btn sm" data-act="office" data-tab="' + head.goto +
+        '">Open the ' + officeName(head.goto) + ' screen</button>' : '') +
+      '</div>';
+
+    var pri = A.priorities(state).slice(1, 4);
+    if (pri.length) {
+      html += '<div class="panel"><h2>Also worth knowing</h2>' +
+        pri.map(function (p) {
+          return '<div class="issue"><b>' + h.esc(p.title) + '</b>' +
+            '<p>' + h.esc(p.detail) + '</p>' +
+            '<p class="fix">' + h.esc(p.fix) + '</p>' +
+            '<button class="btn sm ghost" data-act="office" data-tab="' + p.goto + '">' +
+            officeName(p.goto) + ' →</button></div>';
+        }).join('') + '</div>';
+    }
+
+    html += '<div class="panel"><h2>Today&rsquo;s demand</h2>' +
+      '<p class="sub">Multipliers stack. A rainy Monday in November is not the same shop as a ' +
+      'Saturday in July.</p>' +
+      '<table>' +
+      '<tr><td>Day of week</td><td class="num">' + h.num(f.dowMult, 2) + '×</td></tr>' +
+      '<tr><td>Season (' + f.cal.season + ')</td><td class="num">' + h.num(f.monthMult, 2) + '×</td></tr>' +
+      '<tr><td>Your reputation (' + state.reputation.toFixed(2) + ' stars)</td><td class="num">' +
+        h.num(f.repMult, 2) + '×</td></tr>' +
+      '<tr><td>Service menu coverage (' + h.pct(f.coverage) + ' of jobs)</td><td class="num">' +
+        h.num(f.coverageMult, 2) + '×</td></tr>' +
+      (Math.abs(f.eventMult - 1) > 0.01
+        ? '<tr><td>Active events</td><td class="num">' + h.num(f.eventMult, 2) + '×</td></tr>' : '') +
+      '</table></div>';
+
+    return html;
+  }
+
+  function officeName(key) {
+    return ({ dash: 'Dashboard', floor: 'Shop Floor', crew: 'Crew', parts: 'Parts Room',
+      price: 'Pricing', marketing: 'Marketing', upgrades: 'Facility', books: 'Books' })[key] || key;
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Morning — step 2: pricing
+   * ---------------------------------------------------------------- */
+  function stepPrice(state) {
+    var r = A.prices(state);
+    var pi = E.priceIndex(state), tol = E.priceTolerance(state);
+    var over = pi - tol;
+
+    function row(label, key, min, max, step, fmt, r1) {
+      var cur = state.prices[key];
+      return '<div class="card decision">' +
+        '<label class="field"><span class="lab">' + label + ' <b>' + fmt(cur) + '</b></span>' +
+        '<input type="range" min="' + min + '" max="' + max + '" step="' + step + '" value="' + cur +
+        '" data-act="price" data-key="' + key + '">' +
+        '<input type="number" min="' + min + '" max="' + max + '" step="' + step + '" value="' + cur +
+        '" data-act="price" data-key="' + key + '" style="margin-top:6px"></label>' +
+        rec(fmt(r1.value), r1.why,
+          'data-act="applyprice" data-key="' + key + '" data-value="' + r1.value + '"',
+          Math.abs(cur - r1.value) < (key === 'partsMarkup' ? 0.03 : 0.51)) +
+        '</div>';
+    }
+
+    return '<div class="panel"><h2>Pricing</h2>' +
+      '<p class="sub">Every point of door rate is close to pure profit — and every point above what ' +
+      'this town tolerates costs you closing ratio and stars. The market charges ' +
+      h.money(D.TOWN.marketLaborRate) + '/hr and marks parts up ' +
+      h.num(D.TOWN.marketPartsMarkup, 2) + '×.</p>' +
+      '<div class="grid g2">' +
+        row('Door rate per billed hour', 'laborRate', 90, 260, 5,
+          function (v) { return h.money(v) + '/hr'; }, r.laborRate) +
+        row('Parts markup (matrix base)', 'partsMarkup', 1.2, 2.8, 0.05,
+          function (v) { return h.num(v, 2) + '×'; }, r.partsMarkup) +
+        row('Diagnostic fee', 'diagFee', 0, 320, 5, h.money, r.diagFee) +
+        row('Coupon / discount', 'coupon', 0, 40, 1,
+          function (v) { return v + '% off'; }, r.coupon) +
+      '</div>' +
+      '<div class="alert ' + (over > 0.12 ? 'bad' : over > 0.03 ? '' : over > -0.06 ? 'good' : '') +
+        '" style="margin-top:12px"><b>Price index ' + h.num(pi, 2) + '</b> against a customer ' +
+        'tolerance of ' + h.num(tol, 2) + '. ' +
+        (over > 0.12 ? 'Well above what this town will bear. Expect walkouts.'
+          : over > 0.03 ? 'A little rich. You are losing some price shoppers.'
+            : over > -0.06 ? 'Priced right in the pocket.'
+              : 'Money on the table. Raising the rate is almost pure profit.') + '</div>' +
+      '<div class="row" style="margin-top:10px">' +
+        '<button class="btn" data-act="applyallprice">Use every recommendation on this step</button>' +
+        '<button class="btn ghost sm" data-act="office" data-tab="price">Margin math &amp; example tickets →</button>' +
+      '</div></div>';
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Morning — step 3: advertising
+   * ---------------------------------------------------------------- */
+  function stepAds(state) {
+    var current = Object.keys(state.adSpend).reduce(function (a, k) { return a + state.adSpend[k]; }, 0);
+    var level = UI.adLevel || 'standard';
+    var r = A.ads(state, level);
+    var f = E.forecast(state);
+
+    var html = '<div class="panel"><h2>Advertising</h2>' +
+      '<p class="sub">Pick a spending posture and the budget gets split across channels by whichever ' +
+      'returns the most for the next dollar. Adjust any channel afterward.</p>' +
+      '<div class="levels">' + Object.keys(A.AD_LEVELS).map(function (k) {
+        var L = A.AD_LEVELS[k];
+        return '<button class="level' + (k === level ? ' on' : '') + '" data-act="adlevel" data-level="' + k + '">' +
+          '<b>' + L.name + '</b><span>' + Math.round(L.pct * 100) + '% of sales</span>' +
+          '<em>' + h.esc(L.note) + '</em></button>';
+      }).join('') + '</div>' +
+      rec(h.money(r.total) + '/day total', r.why, 'data-act="applyads"',
+        Math.abs(current - r.total) < 6) +
+      '</div>';
+
+    html += '<div class="panel"><h2>By Channel</h2><div class="grid g2">' +
+      D.AD_CHANNELS.map(function (c) {
+        var spend = state.adSpend[c.key] || 0;
+        var leads = E.channelLeads(state, c) * f.coverageMult;
+        var rc = r.channels[c.key];
+        return '<div class="card decision">' +
+          '<div class="spread"><h3>' + h.esc(c.name) + '</h3>' +
+            '<span class="tag ' + (c.lag > 2 ? 'warn' : 'info') + '">' +
+            (c.lag ? c.lag + '-day lag' : 'same day') + '</span></div>' +
+          '<div class="note">' + h.esc(c.note) + '</div>' +
+          '<label class="field"><span class="lab">Daily budget <b>' + h.money(spend) + '</b></span>' +
+            '<input type="range" min="0" max="' + Math.round(c.halfSpend * 4) + '" step="5" value="' + spend +
+            '" data-act="ad" data-key="' + c.key + '"></label>' +
+          '<div class="small muted">Expected calls per normal day: <b class="money">' +
+            h.num(leads, 1) + '</b> · lead quality ' + h.num(c.intent, 2) + '× close</div>' +
+          rec(h.money(rc.value) + '/day', rc.why,
+            'data-act="applyad" data-key="' + c.key + '" data-value="' + rc.value + '"',
+            spend === rc.value) +
+          '</div>';
+      }).join('') + '</div>' +
+      '<div class="row" style="margin-top:10px">' +
+        '<button class="btn" data-act="applyads">Apply the whole recommended budget</button>' +
+        '<button class="btn ghost sm" data-act="office" data-tab="marketing">Channel performance detail →</button>' +
+      '</div></div>';
+
+    return html;
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Morning — step 4: parts
+   * ---------------------------------------------------------------- */
+  function stepParts(state) {
+    var r = A.parts(state, 7);
+    var used = E.storageUsed(state);
+    var prog = D.ORDER_PROGRAMS[state.orderProgram];
+
+    var html = '<div class="panel"><h2>Parts</h2>' +
+      '<p class="sub">Work you sold and cannot start is a car sitting in a parking space with an ' +
+      'unhappy owner. The recommended column covers seven days at your current pace, with a cushion ' +
+      'for upsells.</p>' +
+      '<table><tr><th>Category</th><th class="num">On Hand</th><th class="num">Inbound</th>' +
+      '<th class="num">Recommended</th><th class="num">Cost</th><th>Why</th><th class="num">Order</th></tr>' +
+      r.rows.map(function (row) {
+        var cat = D.partByKey[row.cat];
+        var low = row.have + row.coming < row.want * 0.5;
+        return '<tr><td><div>' + h.esc(cat.name) + '</div>' +
+          '<div class="small muted">' + h.esc(cat.note) + '</div></td>' +
+          '<td class="num ' + (low ? 'neg' : '') + '">' + row.have + '</td>' +
+          '<td class="num muted">' + (row.coming || '—') + '</td>' +
+          '<td class="num"><b>' + row.order + '</b></td>' +
+          '<td class="num">' + (row.cost ? h.money(row.cost) : '—') + '</td>' +
+          '<td class="small muted">' + h.esc(row.why) + '</td>' +
+          '<td class="num"><input type="number" min="0" step="1" value="' + row.order +
+            '" data-role="qty" data-cat="' + row.cat + '" style="width:76px"></td></tr>';
+      }).join('') + '</table>' +
+      '<div class="row" style="margin-top:12px">' +
+        '<button class="btn primary" data-act="orderall">Order everything recommended · ' +
+          h.money(r.total) + '</button>' +
+        '<span class="small muted">Cash after: ' + h.money(state.cash - r.total) + ' · arrives day ' +
+          (state.day + prog.days) + '</span>' +
+      '</div>' +
+      '<div class="spread" style="margin-top:14px"><span class="small muted">Parts room storage</span>' +
+        '<span class="money small">' + h.num(used, 0) + ' / ' + state.storage + ' units</span></div>' +
+        h.bar(used / state.storage, used / state.storage > 0.9 ? 'bad' : '') +
+      '</div>';
+
+    if (state.onOrder.length) {
+      html += '<div class="panel"><h2>Already On The Way</h2><table>' +
+        '<tr><th>Category</th><th class="num">Units</th><th class="num">Arrives</th></tr>' +
+        state.onOrder.map(function (o) {
+          return '<tr><td>' + h.esc(D.partByKey[o.cat].name) + '</td><td class="num">' + o.units +
+            '</td><td class="num">Day ' + o.arriveDay + ' (' +
+            Math.max(0, o.arriveDay - state.day) + 'd)</td></tr>';
+        }).join('') + '</table></div>';
+    }
+
+    html += '<div class="panel"><h2>Buying Program</h2><div class="grid g2">' +
+      '<label class="field"><span class="lab">Parts quality tier</span>' +
+        '<select data-act="supplier">' + Object.keys(D.SUPPLIERS).map(function (k) {
+          var x = D.SUPPLIERS[k];
+          return '<option value="' + k + '"' + (k === state.supplier ? ' selected' : '') + '>' +
+            h.esc(x.name) + ' (' + h.num(x.costMult, 2) + '× cost)</option>';
+        }).join('') + '</select>' +
+        '<span class="small muted">' + h.esc(D.SUPPLIERS[state.supplier].note) + '</span></label>' +
+      '<label class="field"><span class="lab">Ordering program</span>' +
+        '<select data-act="program">' + Object.keys(D.ORDER_PROGRAMS).map(function (k) {
+          var x = D.ORDER_PROGRAMS[k];
+          return '<option value="' + k + '"' + (k === state.orderProgram ? ' selected' : '') + '>' +
+            h.esc(x.name) + ' (' + h.num(x.costMult, 2) + '× cost)</option>';
+        }).join('') + '</select>' +
+        '<span class="small muted">' + h.esc(prog.note) + '</span></label>' +
+      '</div></div>';
+
+    return html;
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Morning — step 5: crew
+   * ---------------------------------------------------------------- */
+  function stepCrew(state) {
+    var r = A.schedule(state);
+    var html = '<div class="panel"><h2>Who Is Working Today</h2>' +
+      '<p class="sub">Technicians are paid flat rate against a ' + D.FINANCE.techGuaranteeHours +
+      '-hour daily guarantee, so a scheduled hour nobody bills is money out the door. Scheduling ' +
+      'short leaves cars on the lot overnight.</p>' +
+      rec(r.value + ' hours each', r.why, 'data-act="applysched" data-value="' + r.value + '"') +
+      '<div class="grid g2" style="margin-top:12px">' +
+      state.techs.map(function (t) {
+        var busy = t.trainingUntil > state.day;
+        var best = D.SKILL_AREAS.slice().sort(function (a, b) {
+          return t.skills[b.key] - t.skills[a.key];
+        })[0];
+        return '<div class="card decision">' +
+          '<div class="spread"><h3>' + h.esc(t.name) + '</h3>' +
+            '<span class="money small">$' + t.flatRate + '/hr flat</span></div>' +
+          (busy ? '<div class="tag warn">In class: ' + h.esc(t.trainingName) +
+            ' — back day ' + t.trainingUntil + '</div>'
+            : '<div class="note">Strongest at ' + best.name.toLowerCase() + ' · productivity ' +
+              h.pct(t.lifetimeActual ? t.lifetimeBilled / t.lifetimeActual : t.efficiency) +
+              ' · quality ' + h.pct(t.quality) + '</div>') +
+          (busy ? '' :
+            '<label class="field"><span class="lab">Scheduled today <b>' + t.scheduledHours + 'h</b></span>' +
+            '<input type="range" min="0" max="' + E.shiftHours(state) + '" step="1" value="' +
+            t.scheduledHours + '" data-act="schedule" data-id="' + t.id + '"></label>' +
+            '<div class="small muted">Guarantee costs you ' +
+            h.money(D.FINANCE.techGuaranteeHours * t.flatRate * (1 + D.FINANCE.payrollTaxRate)) +
+            ' whether or not there is work.</div>') +
+          '</div>';
+      }).join('') + '</div>' +
+      '<div class="row" style="margin-top:10px">' +
+        '<button class="btn ghost sm" data-act="office" data-tab="crew">Training, certifications &amp; hiring →</button>' +
+      '</div></div>';
+
+    var counter = '<div class="panel"><h2>The Front Counter</h2>' +
+      '<div class="grid g3">' +
+      h.tile('Customers handled/day', h.num(E.advisorCapacity(state), 0),
+        state.advisors.length + ' advisor(s) on duty') +
+      h.tile('Estimated closing ratio', h.pct(E.estimateCloseRate(state, 1)), 'of everyone they talk to') +
+      h.tile('Expected calls today', h.num(E.forecast(state).opportunities, 0),
+        E.forecast(state).opportunities > E.advisorCapacity(state)
+          ? 'more than they can answer' : 'within capacity') +
+      '</div></div>';
+
+    return html + counter;
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Morning — step 6: open up
+   * ---------------------------------------------------------------- */
+  function stepOpen(state) {
+    var f = E.forecast(state);
+    var expectedCars = Math.min(f.opportunities, f.advisorCapacity) * E.estimateCloseRate(state, 1);
+    var aro = state.stats.aro30 || 460;
+    var adTotal = Object.keys(state.adSpend).reduce(function (a, k) { return a + state.adSpend[k]; }, 0);
+    var sched = state.techs.reduce(function (a, t) {
+      return a + (t.trainingUntil > state.day ? 0 : t.scheduledHours);
+    }, 0);
+    var guarantee = state.techs.reduce(function (a, t) {
+      return a + D.FINANCE.techGuaranteeHours * t.flatRate;
+    }, 0) * (1 + D.FINANCE.payrollTaxRate);
+    var fixed = E.dailyFixedCost(state);
+    var advPay = state.advisors.reduce(function (a, x) { return a + x.salary; }, 0) *
+      (1 + D.FINANCE.payrollTaxRate);
+
+    var warn = [];
+    if (sched === 0 && state.techs.length) warn.push('Nobody is scheduled to turn a wrench.');
+    if (E.carsOnSite(state) >= state.parking) warn.push('The lot is already full — you cannot take a car in.');
+    A.parts(state, 3).rows.forEach(function (row) {
+      if (row.have === 0 && row.want > 0) {
+        warn.push('You are out of ' + D.partByKey[row.cat].name.toLowerCase() +
+          '. Those jobs will pay hot-shot prices or sit.');
+      }
+    });
+    if (adTotal === 0) warn.push('No advertising running. Only walk-ins and repeat customers today.');
+    if (state.cash < fixed * 3) warn.push('Cash covers less than three days of overhead.');
+
+    return '<div class="panel"><h2>Today&rsquo;s Plan</h2>' +
+      '<div class="grid g3">' +
+        h.tile('Expected cars', h.num(expectedCars, 0), 'from ' + h.num(f.opportunities, 0) + ' calls') +
+        h.tile('Projected sales', h.money(expectedCars * aro), 'at your ' + h.money(aro) + ' average ticket') +
+        h.tile('Committed cost', h.money(adTotal + guarantee + fixed + advPay),
+          'ads, guarantees, salaries and overhead') +
+      '</div>' +
+      '<table style="margin-top:14px">' +
+      '<tr><th>The plan you just set</th><th class="num"></th></tr>' +
+      '<tr><td>Door rate</td><td class="num">' + h.money(state.prices.laborRate) + '/hr</td></tr>' +
+      '<tr><td>Parts markup</td><td class="num">' + h.num(state.prices.partsMarkup, 2) + '×</td></tr>' +
+      '<tr><td>Diagnostic fee</td><td class="num">' + h.money(state.prices.diagFee) + '</td></tr>' +
+      (state.prices.coupon ? '<tr><td>Coupon</td><td class="num">' + state.prices.coupon + '% off</td></tr>' : '') +
+      '<tr><td>Advertising</td><td class="num">' + h.money(adTotal) + '/day</td></tr>' +
+      '<tr><td>Technician hours scheduled</td><td class="num">' + sched + '</td></tr>' +
+      '<tr><td>Parts arriving today</td><td class="num">' +
+        (state.onOrder.filter(function (o) { return o.arriveDay <= state.day; })
+          .reduce(function (a, o) { return a + o.units; }, 0) || '—') + '</td></tr>' +
+      '</table></div>' +
+
+      (warn.length ? '<div class="panel"><h2>Before You Unlock The Door</h2>' +
+        warn.map(function (w) { return '<div class="alert">' + h.esc(w) + '</div>'; }).join('') +
+        '</div>' : '<div class="panel"><div class="alert good">The plan looks sound. Open up.</div></div>') +
+
+      '<div class="panel">' +
+      '<button class="btn primary run" data-act="openshop">Open The Shop</button>' +
+      '<div class="row" style="margin-top:10px">' +
+        '<button class="btn ghost sm" style="flex:1" data-act="fastforward" data-days="6">Skip 6 days</button>' +
+        '<button class="btn ghost sm" style="flex:1" data-act="fastforward" data-days="30">Skip 30 days</button>' +
+      '</div>' +
+      '<p class="small muted" style="margin:8px 0 0">Skipping keeps today&rsquo;s plan, auto-orders parts ' +
+      'to a seven-day target, and hands you the summary at the end.</p></div>';
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Act two — the day, on the clock
+   * ---------------------------------------------------------------- */
+  function dayScreen(state) {
+    var p = UI.play;
+    if (!p) return '';
+    var t = p.t;
+    var res = p.res;
+    var shown = res.timeline.filter(function (e) { return e.t <= t; });
+
+    var cars = 0, sold = 0, billed = 0, sales = 0, lost = 0;
+    shown.forEach(function (e) {
+      if (e.kind === 'arrive') { cars++; }
+      if (e.kind === 'deliver') { sold++; sales += e.amount || 0; }
+      if (e.kind === 'work') billed += e.billed || 0;
+      if (e.kind === 'lost') lost++;
+    });
+
+    var open = E.SHOP_OPEN, close = E.shopClose(state);
+    var frac = (t - open) / (close - open);
+
+    var html = '<div class="panel dayhead">' +
+      '<div class="spread">' +
+        '<div><div class="k">Shop clock</div><div class="bigclock">' + E.clock(Math.min(t, close)) + '</div></div>' +
+        '<div class="playctl">' +
+          '<button class="btn sm" data-act="playpause">' + (p.playing ? '❚❚ Pause' : '▶ Play') + '</button>' +
+          [1, 2, 4].map(function (sp) {
+            return '<button class="btn sm ' + (p.speed === sp ? 'primary' : 'ghost') +
+              '" data-act="speed" data-speed="' + sp + '">' + sp + '×</button>';
+          }).join('') +
+          '<button class="btn sm ghost" data-act="skipday">Skip to close</button>' +
+        '</div>' +
+      '</div>' +
+      h.bar(Math.max(0, Math.min(1, frac))) +
+      '<div class="grid g3" style="margin-top:12px">' +
+        h.tile('Cars taken in', cars, lost + ' opportunities lost') +
+        h.tile('Cars delivered', sold, h.money(sales) + ' collected') +
+        h.tile('Hours billed', h.num(billed), 'so far today') +
+      '</div></div>';
+
+    /* What each bay is doing right now. */
+    html += '<div class="panel"><h2>The Floor</h2><div class="bays">' +
+      state.bays.map(function (b) {
+        var busyWith = null;
+        res.timeline.forEach(function (e) {
+          if (e.kind === 'work' && e.bayId === b.id && e.start <= t && e.end > t) busyWith = e;
+        });
+        var down = b.readyDay > state.day || b.downUntil > state.day;
+        return '<div class="baycard' + (busyWith ? ' busy' : down ? ' down' : '') + '">' +
+          '<div class="bayname">' + h.esc(b.name) + '</div>' +
+          (down ? '<div class="baystate">Out of service</div>'
+            : busyWith
+              ? '<div class="baystate on">' + h.esc(busyWith.jobName) + '</div>' +
+                '<div class="baysub">' + h.esc(techName(state, busyWith.techId)) + ' · until ' +
+                E.clock(busyWith.end) + '</div>' +
+                h.bar((t - busyWith.start) / Math.max(0.1, busyWith.end - busyWith.start))
+              : '<div class="baystate idle">Empty</div>' +
+                '<div class="baysub">No car on the lift</div>') +
+          '</div>';
+      }).join('') + '</div></div>';
+
+    html += '<div class="panel"><h2>As It Happened</h2>' +
+      (shown.length
+        ? '<ol class="feed">' + shown.slice().reverse().map(function (e) {
+          return '<li class="fe ' + e.kind + ' ' + (e.tone || '') + '">' +
+            '<span class="ft">' + E.clock(e.t) + '</span>' +
+            '<span class="fb"><b>' + h.esc(e.title) + '</b>' +
+            (e.detail ? '<span>' + h.esc(e.detail) + '</span>' : '') + '</span></li>';
+        }).join('') + '</ol>'
+        : '<p class="sub">Waiting on the first car.</p>') +
+      '</div>';
+
+    return html;
+  }
+
+  function techName(state, id) {
+    var t = state.techs.filter(function (x) { return x.id === id; })[0];
+    return t ? t.name : 'Technician';
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Act three — the evening
+   * ---------------------------------------------------------------- */
+  function eveningScreen(state) {
+    var r = UI.lastResult;
+    if (!r) return '<div class="panel"><p class="sub">Nothing to report.</p></div>';
+
+    var html = '<div class="panel hero">' +
+      '<div class="hero-date">' + r.cal.label + '</div>' +
+      '<h2 class="hero-h">' + (r.closed ? 'Closed for the day'
+        : r.net >= 0 ? 'You made money today' : 'You lost money today') + '</h2>' +
+      '<div class="grid g3" style="margin-top:12px">' +
+        h.tile('Cars delivered', r.cars, r.carryover + ' still on the lot') +
+        h.tile('Sales', h.money(r.revenue), r.cars ? h.money(r.revenue / r.cars) + ' per car' : '—') +
+        h.tile('Net profit', h.money(r.net), '', r.net >= 0 ? 'good' : 'bad') +
+      '</div></div>';
+
+    if (!r.closed) {
+      html += '<div class="grid g2">' +
+        '<div class="panel"><h2>The Money</h2>' + h.plTable(r) + '</div>' +
+        '<div class="panel"><h2>The Day</h2><table>' +
+        '<tr><td>Opportunities</td><td class="num">' + r.opportunities + '</td></tr>' +
+        '<tr><td>Handled by advisors</td><td class="num">' + r.presented + '</td></tr>' +
+        '<tr><td>Sold</td><td class="num">' + r.won + ' (' +
+          (r.presented ? h.pct(r.won / r.presented) : '—') + ')</td></tr>' +
+        '<tr><td>Hours billed</td><td class="num">' + h.num(r.billedHours) + '</td></tr>' +
+        '<tr><td>Hours on the clock</td><td class="num">' + h.num(r.actualHours) + '</td></tr>' +
+        '<tr><td>Productivity</td><td class="num">' +
+          (r.actualHours ? h.pct(r.billedHours / r.actualHours) : '—') + '</td></tr>' +
+        '<tr><td>Bay utilization</td><td class="num">' +
+          (r.bayHoursAvail ? h.pct(r.bayHoursUsed / r.bayHoursAvail) : '—') + '</td></tr>' +
+        '<tr><td>Average satisfaction</td><td class="num">' + (r.avgSat || '—') + '</td></tr>' +
+        '</table></div></div>';
+
+      var leaks = [];
+      if (r.turnedAwayCapacity) leaks.push(['Calls nobody answered', r.turnedAwayCapacity,
+        'Hire an advisor or buy phone-skills training.', 'crew']);
+      if (r.turnedAwayParking) leaks.push(['Turned away — lot full', r.turnedAwayParking,
+        'Pave more parking, or finish cars faster so they leave.', 'upgrades']);
+      if (r.lostCapability) leaks.push(['Work you cannot perform', r.lostCapability,
+        'Tooling and certifications widen the menu.', 'floor']);
+      if (r.comebacks) leaks.push(['Comebacks', r.comebacks,
+        'Free labor you already paid for. Quality training or better parts.', 'crew']);
+      if (r.hotshotCount) leaks.push(['Hot-shot parts runs', r.hotshotCount,
+        'Order deeper so the shelf covers the work you sell.', 'parts']);
+      if (leaks.length) {
+        html += '<div class="panel"><h2>What Today Cost You</h2>' +
+          '<table><tr><th>Leak</th><th class="num">Today</th><th>What fixes it</th><th></th></tr>' +
+          leaks.map(function (l) {
+            return '<tr><td>' + l[0] + '</td><td class="num neg">' + l[1] + '</td>' +
+              '<td class="small muted">' + l[2] + '</td>' +
+              '<td class="right"><button class="btn sm ghost" data-act="office" data-tab="' + l[3] +
+              '">Fix</button></td></tr>';
+          }).join('') + '</table></div>';
+      }
+
+      if (r.reviews.length) {
+        html += '<div class="panel"><h2>Reviews That Landed</h2>' +
+          r.reviews.map(function (v) {
+            return '<div class="alert ' + (v.stars >= 4 ? 'good' : v.stars <= 2 ? 'bad' : '') + '">' +
+              '<span class="stars">' + h.stars(v.stars) + '</span> ' + v.stars.toFixed(1) +
+              ' — ' + h.esc(v.customer) + '</div>';
+          }).join('') + '</div>';
+      }
+    }
+
+    r.events.forEach(function (e) {
+      html += '<div class="panel"><h2>' + h.esc(e.name) + '</h2><p class="sub">' + h.esc(e.text) + '</p></div>';
+    });
+    if (r.notes.length) {
+      html += '<div class="panel"><h2>Notes</h2>' +
+        r.notes.map(function (n) { return '<div class="alert">' + h.esc(n) + '</div>'; }).join('') + '</div>';
+    }
+
+    /* Decisions the day forced on you. */
+    html += '<div class="panel"><h2>Tonight&rsquo;s Decisions</h2>';
+    if (state.pendingChoice) {
+      html += '<div class="issue"><b>' + h.esc(state.pendingChoice.name) + '</b>' +
+        '<p>' + h.esc(state.pendingChoice.text) + '</p>' +
+        '<div class="row wrap">' + state.pendingChoice.options.map(function (o) {
+          return '<button class="btn" data-act="choice" data-key="' + o.key + '">' +
+            h.esc(o.label) + '</button>';
+        }).join('') + '</div></div>';
+    }
+    var top = A.priorities(state)[0];
+    if (top) {
+      html += '<div class="issue"><b>' + h.esc(top.title) + '</b>' +
+        '<p>' + h.esc(top.detail) + '</p><p class="fix">' + h.esc(top.fix) + '</p>' +
+        '<button class="btn sm" data-act="office" data-tab="' + top.goto + '">' +
+        'Open ' + officeName(top.goto) + '</button></div>';
+    }
+    html += '<p class="small muted">Anything you buy tonight — tooling, training, a hire, a new bay — ' +
+      'starts working tomorrow morning.</p>' +
+      '<div class="row wrap" style="margin-top:8px">' +
+      ['floor', 'crew', 'upgrades', 'books'].map(function (k) {
+        return '<button class="btn sm ghost" data-act="office" data-tab="' + k + '">' +
+          officeName(k) + '</button>';
+      }).join('') + '</div></div>';
+
+    html += '<div class="panel">' +
+      (state.pendingChoice
+        ? '<div class="alert">Settle the decision above before you plan tomorrow.</div>'
+        : '<button class="btn primary run" data-act="tomorrow">Plan Tomorrow →</button>') +
+      '</div>';
+
+    return html;
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Shell
+   * ---------------------------------------------------------------- */
+  function phaseNav(state) {
+    var phases = [['morning', 'Before', 'Plan the day'],
+      ['day', 'During', 'Watch it run'],
+      ['evening', 'After', 'Read the outcome']];
+    var order = { morning: 0, day: 1, evening: 2 };
+    return '<nav class="phases">' + phases.map(function (p) {
+      var cls = state.phase === p[0] ? 'now' : order[state.phase] > order[p[0]] ? 'done' : '';
+      return '<div class="phase ' + cls + '"><b>' + p[1] + '</b><span>' + p[2] + '</span></div>';
+    }).join('') + '</nav>';
+  }
+
+  function render() {
+    var state = UI.state;
+    if (!state.phase) state.phase = 'morning';
+    if (state.step === undefined) state.step = 0;
+
+    document.getElementById('header').innerHTML = UI.renderHeader(UI.office);
+
+    var body = document.getElementById('body');
+    var rail = document.getElementById('rail');
+    var wrap = document.querySelector('.main');
+
+    if (UI.office) {
+      wrap.classList.add('office');
+      body.innerHTML = '<div class="officebar"><button class="btn" data-act="closeoffice">' +
+        '← Back to ' + (state.phase === 'evening' ? 'tonight' : state.phase === 'day' ? 'the floor' : 'the morning plan') +
+        '</button><span class="small muted">Detail screens. Anything you change here applies immediately.</span></div>' +
+        (UI.tabs[UI.office] ? UI.tabs[UI.office]() : '');
+      rail.innerHTML = '';
+      rail.style.display = 'none';
+    } else {
+      wrap.classList.remove('office');
+      rail.style.display = '';
+      if (state.phase === 'morning') {
+        body.innerHTML = phaseNav(state) +
+          '<div class="stepwrap">' +
+            (({ brief: stepBrief, price: stepPrice, ads: stepAds,
+              parts: stepParts, crew: stepCrew, open: stepOpen })[STEPS[state.step].key])(state) +
+            stepNav(state) +
+          '</div>';
+        rail.innerHTML = '<div class="panel"><h2>This Morning</h2>' + stepRail(state) + '</div>' +
+          UI.railLog(state);
+      } else if (state.phase === 'day') {
+        body.innerHTML = phaseNav(state) + dayScreen(state);
+        rail.innerHTML = '<div class="panel"><h2>Watching</h2>' +
+          '<p class="sub">The shop runs 7am to ' + E.clock(E.shopClose(state)) +
+          '. Every car, every job and every missed call in the order it happened.</p></div>' +
+          UI.railLog(state);
+      } else {
+        body.innerHTML = phaseNav(state) + eveningScreen(state);
+        rail.innerHTML = UI.railLog(state);
+      }
+    }
+
+    if (state.gameOver && !UI.modal) {
+      UI.showModal('Out Of Business — Day ' + state.gameOver.day,
+        '<p>' + h.esc(state.gameOver.reason) + '</p>' +
+        '<p class="muted">You served ' + state.stats.carsServed + ' cars and booked ' +
+        h.money(state.stats.revenueTotal) + ' in sales along the way.</p>',
+        '<button class="btn primary" data-act="newgame">Start over</button>', false);
+    }
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Playback driver
+   * ---------------------------------------------------------------- */
+  function startDay() {
+    var state = UI.state;
+    if (state.pendingChoice) { UI.choiceModal(); return; }
+    if (state.gameOver) return;
+
+    var snapshot = {
+      cash: state.cash, debt: state.debt, rep: state.reputation,
+      customers: state.customerBase, onSite: E.carsOnSite(state)
+    };
+    var res = E.runDay(state);
+    if (!res) return;
+    UI.lastResult = res;
+    state.phase = 'day';
+
+    if (res.closed) { finishDay(); return; }
+
+    UI.play = {
+      res: res, t: E.SHOP_OPEN, playing: true, speed: 2,
+      close: E.shopClose(state), timer: null, snapshot: snapshot
+    };
+    render();
+    tick();
+  }
+
+  function tick() {
+    var p = UI.play;
+    if (!p) return;
+    clearTimeout(p.timer);
+    if (!p.playing) return;
+    p.timer = setTimeout(function () {
+      p.t += 0.09 * p.speed;
+      if (p.t >= p.close) {
+        p.t = p.close;
+        p.playing = false;
+        render();
+        setTimeout(finishDay, 700);
+        return;
+      }
+      render();
+      tick();
+    }, 70);
+  }
+
+  function finishDay() {
+    var p = UI.play;
+    if (p) { clearTimeout(p.timer); }
+    UI.play = null;
+    UI.state.phase = 'evening';
+    render();
+    UI.save(true);
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Actions this module owns
+   * ---------------------------------------------------------------- */
+  function registerActions(ACTIONS) {
+    ACTIONS.nextstep = function () {
+      UI.state.step = Math.min(STEPS.length - 1, UI.state.step + 1);
+      render(); window.scrollTo(0, 0);
+    };
+    ACTIONS.prevstep = function () {
+      UI.state.step = Math.max(0, UI.state.step - 1);
+      render(); window.scrollTo(0, 0);
+    };
+    ACTIONS.gostep = function (el) {
+      UI.state.step = parseInt(el.getAttribute('data-step'), 10) || 0;
+      render(); window.scrollTo(0, 0);
+    };
+    ACTIONS.office = function (el) {
+      UI.office = el.getAttribute('data-tab');
+      if (UI.play) { UI.play.playing = false; clearTimeout(UI.play.timer); }
+      render(); window.scrollTo(0, 0);
+    };
+    ACTIONS.closeoffice = function () {
+      UI.office = null;
+      render(); window.scrollTo(0, 0);
+    };
+    ACTIONS.tab = function (el) {
+      UI.office = el.getAttribute('data-tab');
+      render(); window.scrollTo(0, 0);
+    };
+
+    ACTIONS.applyprice = function (el) {
+      E.setPrice(UI.state, el.getAttribute('data-key'), el.getAttribute('data-value'));
+      render();
+    };
+    ACTIONS.applyallprice = function () {
+      var r = A.prices(UI.state);
+      Object.keys(r).forEach(function (k) { E.setPrice(UI.state, k, r[k].value); });
+      UI.toast('Pricing set to the recommendation.');
+      render();
+    };
+    ACTIONS.adlevel = function (el) {
+      UI.adLevel = el.getAttribute('data-level');
+      render();
+    };
+    ACTIONS.applyad = function (el) {
+      E.setAdSpend(UI.state, el.getAttribute('data-key'), el.getAttribute('data-value'));
+      render();
+    };
+    ACTIONS.applyads = function () {
+      var r = A.ads(UI.state, UI.adLevel || 'standard');
+      Object.keys(r.channels).forEach(function (k) {
+        E.setAdSpend(UI.state, k, r.channels[k].value);
+      });
+      UI.toast('Advertising budget set to ' + h.money(r.total) + '/day.');
+      render();
+    };
+    ACTIONS.applysched = function (el) {
+      var v = el.getAttribute('data-value');
+      UI.state.techs.forEach(function (t) { E.setSchedule(UI.state, t.id, v); });
+      UI.toast('Everyone scheduled for ' + v + ' hours.');
+      render();
+    };
+
+    ACTIONS.openshop = function () { startDay(); };
+    ACTIONS.playpause = function () {
+      if (!UI.play) return;
+      UI.play.playing = !UI.play.playing;
+      render();
+      if (UI.play.playing) tick();
+    };
+    ACTIONS.speed = function (el) {
+      if (!UI.play) return;
+      UI.play.speed = parseInt(el.getAttribute('data-speed'), 10) || 1;
+      render();
+    };
+    ACTIONS.skipday = function () {
+      if (!UI.play) return;
+      UI.play.playing = false;
+      clearTimeout(UI.play.timer);
+      finishDay();
+    };
+    ACTIONS.tomorrow = function () {
+      UI.state.phase = 'morning';
+      UI.state.step = 0;
+      render(); window.scrollTo(0, 0);
+      UI.save(true);
+    };
+    ACTIONS.fastforward = function (el) {
+      var n = parseInt(el.getAttribute('data-days'), 10) || 6;
+      UI.runDays(n);
+      UI.state.phase = 'evening';
+      render();
+    };
+  }
+
+  S.render = render;
+  S.registerActions = registerActions;
+  S.STEPS = STEPS;
+  S.attach = function (ui) { UI = ui; h = ui.h; };
+
+  root.AutoShopScreens = S;
 })(window);
 
 window.AutoShopUI.boot();

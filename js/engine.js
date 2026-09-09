@@ -36,6 +36,46 @@
   }
 
   /* ------------------------------------------------------------------ *
+   * The shop clock. Doors open at 7am; nothing new goes on a lift after
+   * close. Times are stored as fractional hours (13.5 = 1:30pm).
+   * ------------------------------------------------------------------ */
+  var SHOP_OPEN = 7;
+  function shopClose(state) { return 18 + (state.upgrades && state.upgrades.secondshift ? 2 : 0); }
+
+  function clock(t) {
+    var h = Math.floor(t), m = Math.round((t - h) * 60);
+    if (m >= 60) { h++; m -= 60; }
+    var ap = h >= 12 ? 'pm' : 'am';
+    var hh = h % 12; if (hh === 0) hh = 12;
+    return hh + ':' + (m < 10 ? '0' : '') + m + ap;
+  }
+  function clockRange(a, b) { return clock(a) + '–' + clock(b); }
+  function num1(v) { return (Math.round(v * 10) / 10).toFixed(1); }
+
+  /* Append an entry to the day's play-by-play. */
+  function mark(res, t, kind, title, detail, tone, extra) {
+    var e = { t: t, kind: kind, title: title, detail: detail || '', tone: tone || '' };
+    if (extra) Object.keys(extra).forEach(function (k) { e[k] = extra[k]; });
+    res.timeline.push(e);
+    return e;
+  }
+
+  /*
+   * When a car shows up. Real shops load in hard at open and trickle after
+   * lunch, which is exactly why the afternoon drop-offs roll to tomorrow.
+   */
+  function arrivalTime(state, close, earlyBird) {
+    var r = rng(state), t;
+    if (r < 0.34) t = rnd(state, 7.0, 9.0);
+    else if (r < 0.60) t = rnd(state, 9.0, 11.0);
+    else if (r < 0.80) t = rnd(state, 11.0, 13.5);
+    else if (r < 0.94) t = rnd(state, 13.5, 15.5);
+    else t = rnd(state, 15.5, 16.8);
+    t -= (earlyBird || 0);
+    return clamp(t, SHOP_OPEN, close - 0.2);
+  }
+
+  /* ------------------------------------------------------------------ *
    * Calendar helpers. Day 1 = Monday, March 2nd (year 1).
    * ------------------------------------------------------------------ */
   var MONTH_LENGTHS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -127,6 +167,8 @@
       startSeed: 0,
       day: 1,
       nextId: 1,
+      phase: 'morning',      // morning -> day -> evening
+      step: 0,               // which morning step you are on
       shopName: 'Torque & Turnover Auto',
       cash: D.FINANCE.startingCash,
       debt: 0,
@@ -448,7 +490,7 @@
   /* ------------------------------------------------------------------ *
    * Parts handling
    * ------------------------------------------------------------------ */
-  function takeParts(state, job, res) {
+  function takeParts(state, job, res, when, ro) {
     var need = job.parts, k;
     var short = [];
     for (k in need) {
@@ -474,6 +516,12 @@
       res.hotshotCost += cost;
       res.hotshotCount++;
       state.cash -= cost;
+      if (when !== undefined) {
+        mark(res, when, 'parts', 'Hot-shot parts run',
+          short.map(function (c) { return D.partByKey[c].name; }).join(', ') +
+          ' ran out' + (ro ? ' on ' + ro.customer + "'s car" : '') + '. Paid ' + fmtMoney(cost) +
+          ' to keep it moving.', 'warn');
+      }
     }
     var partsCost = 0;
     for (k in need) {
@@ -491,13 +539,13 @@
     var cal = calendar(state.day);
     var res = {
       day: state.day, cal: cal, closed: cal.dow === 6,
-      opportunities: 0, presented: 0, closed: 0, sold: 0, cars: 0, turnedAwayParking: 0,
+      opportunities: 0, presented: 0, won: 0, sold: 0, cars: 0, turnedAwayParking: 0,
       turnedAwayCapacity: 0, lostCapability: 0, laborRevenue: 0, partsRevenue: 0,
       partsCost: 0, hotshotCost: 0, hotshotCount: 0, revenue: 0, grossProfit: 0,
       payroll: 0, adSpend: 0, fixed: 0, interest: 0, taxes: 0, expenses: 0, net: 0,
       billedHours: 0, actualHours: 0, bayHoursAvail: 0, bayHoursUsed: 0,
       completed: 0, carryover: 0, comebacks: 0, reviews: [], events: [],
-      newCustomers: 0, jobsDone: {}, notes: [], avgSat: 0
+      newCustomers: 0, jobsDone: {}, notes: [], avgSat: 0, timeline: []
     };
 
     // --- 1. Overnight: deliveries, training returns, construction ------
@@ -561,23 +609,63 @@
     var caps = capabilities(state);
     var newROs = [];
     var spaceLeft = state.parking - carsOnSite(state);
+    var closeHour = shopClose(state);
+    var earlyBird = upgradeEffect(state, 'throughputStart');
 
+    var arrivals = [];
     for (var si = 0; si < sources.length; si++) {
-      var src = sources[si];
-      for (var i = 0; i < src.count; i++) {
-        if (handled >= capacity) { res.turnedAwayCapacity++; state.stats.lostNoCapacity++; continue; }
-        handled++;
-        res.presented++;
-        var closeRate = estimateCloseRate(state, src.intent);
-        if (!chance(state, closeRate)) continue;
-        res.closed++;
-        if (spaceLeft <= 0) { res.turnedAwayParking++; state.stats.lostNoParking++; continue; }
-        var ro = buildRO(state, src, caps, res);
-        if (!ro) { res.lostCapability++; state.stats.lostNoCapability++; continue; }
-        spaceLeft--;
-        newROs.push(ro);
-        res.sold++;
+      for (var i = 0; i < sources[si].count; i++) {
+        arrivals.push({ src: sources[si], t: arrivalTime(state, closeHour, earlyBird) });
       }
+    }
+    arrivals.sort(function (a, b) { return a.t - b.t; });
+
+    mark(res, SHOP_OPEN, 'open', 'Doors open',
+      state.techs.filter(function (t) { return t.trainingUntil <= state.day; }).length +
+      ' technician(s) on the schedule, ' + state.openROs.length + ' car(s) carried over.', 'info');
+
+    for (var ai = 0; ai < arrivals.length; ai++) {
+      var src = arrivals[ai].src;
+      var at = arrivals[ai].t;
+      if (handled >= capacity) {
+        res.turnedAwayCapacity++;
+        state.stats.lostNoCapacity++;
+        mark(res, at, 'lost', 'Call went to voicemail',
+          'Nobody at the counter was free to pick up.', 'bad');
+        continue;
+      }
+      handled++;
+      res.presented++;
+      var closeRate = estimateCloseRate(state, src.intent);
+      if (!chance(state, closeRate)) {
+        mark(res, at, 'lost', 'Customer shopped it elsewhere',
+          'Presented, not sold — ' + sourceName(src.key) + '.', '');
+        continue;
+      }
+      res.won++;
+      if (spaceLeft <= 0) {
+        res.turnedAwayParking++;
+        state.stats.lostNoParking++;
+        mark(res, at, 'lost', 'Turned away — no room on the lot',
+          'They said yes and you had nowhere to put the car.', 'bad');
+        continue;
+      }
+      var ro = buildRO(state, src, caps, res);
+      if (!ro) {
+        res.lostCapability++;
+        state.stats.lostNoCapability++;
+        mark(res, at, 'lost', 'Work you cannot perform',
+          'They needed something your bays or certifications do not cover.', 'bad');
+        continue;
+      }
+      ro.arrival = at;
+      spaceLeft--;
+      newROs.push(ro);
+      res.sold++;
+      mark(res, at, 'arrive', ro.customer + ' — ' + ro.jobs.map(function (j) { return j.name; }).join(' + '),
+        sourceName(src.key) + ' · ' + num1(ro.jobs.reduce(function (a, j) { return a + j.bookHours; }, 0)) +
+        ' book hours', 'good',
+        { book: ro.jobs.reduce(function (a, j) { return a + j.bookHours; }, 0), source: src.key });
     }
     // Recaptured declined work rides along as extra sold labor on existing cars.
     if (recaptured > 0 && newROs.length) {
@@ -592,9 +680,12 @@
     state.comebacks = state.comebacks.filter(function (c) { return c.day > state.day; });
     due.forEach(function (c) {
       var job = D.jobByKey[c.jobKey];
+      var cbAt = rnd(state, 7.4, 10.5);
+      mark(res, cbAt, 'arrive', 'Comeback: ' + job.name,
+        'A car you already fixed is back. The labor is on you.', 'bad');
       state.openROs.push({
         id: 'RO' + (state.nextId++), customer: c.customer, soldDay: state.day,
-        source: 'comeback', isComeback: true, sat: 3.0, aroMult: 1,
+        source: 'comeback', isComeback: true, sat: 3.0, aroMult: 1, arrival: cbAt,
         jobs: [{ key: job.key, name: job.name + ' (comeback)', bookHours: job.bookHours * 0.6,
           remaining: job.bookHours * 0.6, parts: {}, partsCost: 0, done: false, waitingParts: false }]
       });
@@ -608,6 +699,12 @@
     // --- 8. Deliver finished cars ---------------------------------------
     deliver(state, res, recaptured);
 
+    var closingBell = shopClose(state);
+    mark(res, closingBell, 'close', 'Doors close',
+      res.cars + ' car(s) delivered, ' + res.carryover + ' still on the lot.',
+      res.carryover > state.parking * 0.7 ? 'warn' : 'info');
+    res.timeline.sort(function (a, b) { return a.t - b.t; });
+
     // --- 9. Money --------------------------------------------------------
     payroll(state, res);
     finishFinances(state, res);
@@ -616,6 +713,14 @@
 
     state.day++;
     return res;
+  }
+
+  function sourceName(key) {
+    if (key === 'organic') return 'Walk-in';
+    if (key === 'loyal') return 'Repeat customer';
+    if (key === 'comeback') return 'Comeback';
+    var ch = D.AD_CHANNELS.filter(function (c) { return c.key === key; })[0];
+    return ch ? ch.name.replace(/ \(.*\)/, '') : key;
   }
 
   /* Build a repair order from an opportunity. */
@@ -703,35 +808,60 @@
   }
 
   /* Dispatch open work to bays and technicians. */
+  /*
+   * Production runs on a clock, not a pool of hours. Each bay and each
+   * technician has a "free from" time; a job cannot start before its car
+   * arrives, before the bay opens up, or before a qualified technician is
+   * free — and nothing starts after closing. That is what makes a car
+   * dropped off at 3pm roll over to tomorrow, and it is what lets the
+   * during-the-day screen replay the shop in order.
+   */
   function produce(state, res) {
-    var hoursPerBay = shiftHours(state) + upgradeEffect(state, 'throughputStart');
-    var bayHours = state.bays.map(function (b) {
-      if (b.readyDay > state.day || b.downUntil > state.day) return 0;
-      return hoursPerBay;
-    });
-    res.bayHoursAvail = bayHours.reduce(function (a, b) { return a + b; }, 0);
+    var open = SHOP_OPEN;
+    var close = shopClose(state);
 
-    var techHours = state.techs.map(function (t) {
-      if (t.trainingUntil > state.day) return 0;
-      return Math.min(t.scheduledHours, shiftHours(state));
+    var bayFree = state.bays.map(function (b) {
+      return (b.readyDay > state.day || b.downUntil > state.day) ? Infinity : open;
     });
+    var bayUsed = state.bays.map(function () { return 0; });
+    var liveBays = bayFree.filter(function (f) { return f !== Infinity; }).length;
+    // Utilization is judged against a normal staffed shift, not the whole
+    // eleven hours the building happens to be unlocked.
+    res.bayHoursAvail = liveBays * shiftHours(state);
+
+    // A technician's own shift ends when their scheduled hours run out.
+    var techEnd = state.techs.map(function (t) {
+      if (t.trainingUntil > state.day) return -Infinity;
+      return open + Math.min(t.scheduledHours, shiftHours(state));
+    });
+    var techFree = state.techs.map(function () { return open; });
     var techBilled = state.techs.map(function () { return 0; });
     var techActual = state.techs.map(function () { return 0; });
 
-    // Oldest promised work first — that is how a real dispatch board runs.
-    var queue = state.openROs.slice().sort(function (a, b) { return a.soldDay - b.soldDay; });
+    // Oldest promised work first, then by the order cars actually showed up.
+    var queue = state.openROs.slice().sort(function (a, b) {
+      return (a.soldDay - b.soldDay) || ((a.arrival || open) - (b.arrival || open));
+    });
 
     for (var qi = 0; qi < queue.length; qi++) {
       var ro = queue[qi];
+      var here = ro.soldDay < state.day ? open : (ro.arrival || open);
       for (var ji = 0; ji < ro.jobs.length; ji++) {
         var job = ro.jobs[ji];
         if (job.done) continue;
         var jobDef = D.jobByKey[job.key];
 
-        // Parts first.
+        // Parts have to be in hand before the car goes up.
         if (!job.partsTaken) {
-          var pc = takeParts(state, { parts: job.parts }, res);
-          if (pc === false) { job.waitingParts = true; continue; }
+          var pc = takeParts(state, { parts: job.parts }, res, here, ro);
+          if (pc === false) {
+            if (!job.waitingParts) {
+              job.waitingParts = true;
+              mark(res, here, 'parts', ro.customer + ' is waiting on parts',
+                job.name + ' cannot start until the shipment lands.', 'bad');
+            }
+            continue;
+          }
           job.waitingParts = false;
           job.partsTaken = true;
           job.partsCost = pc;
@@ -739,33 +869,52 @@
 
         var guard = 0;
         while (!job.done && guard++ < 30) {
-          var bi = findBay(state, jobDef, bayHours);
+          var bi = pickBay(state, jobDef, bayFree, here, close);
           if (bi < 0) break;
-          var ti = findTech(state, jobDef, techHours);
+          var ti = pickTech(state, jobDef, techFree, techEnd, here, Math.max(here, bayFree[bi]));
           if (ti < 0) break;
           var tech = state.techs[ti];
           var bay = state.bays[bi];
+          var start = Math.max(here, bayFree[bi], techFree[ti]);
+          var stop = Math.min(close, techEnd[ti]);
+          var avail = stop - start;
+          if (avail <= 0.02) break;
+
           var rate = productionRate(tech, bay, jobDef);
           var needActual = job.remaining / rate;
-          var avail = Math.min(bayHours[bi], techHours[ti]);
           var spend = Math.min(needActual, avail);
-          if (spend <= 0.01) break;
           var progress = spend * rate;
+
           job.remaining -= progress;
-          bayHours[bi] -= spend;
-          techHours[ti] -= spend;
+          bayFree[bi] = start + spend;
+          techFree[ti] = start + spend;
+          bayUsed[bi] += spend;
           techBilled[ti] += progress;
           techActual[ti] += spend;
           res.billedHours += progress;
           res.actualHours += spend;
           res.bayHoursUsed += spend;
+
           if (job.remaining <= 0.005) {
             job.remaining = 0;
             job.done = true;
             job.techId = tech.id;
             job.bayId = bay.id;
+            job.finishedAt = start + spend;
             job.quality = qualityRoll(state, tech, bay, jobDef);
             res.jobsDone[job.key] = (res.jobsDone[job.key] || 0) + 1;
+            mark(res, job.finishedAt, 'work', tech.name + ' finished ' + job.name,
+              bay.name + ' · ' + clockRange(start, job.finishedAt) + ' · ' +
+              num1(job.bookHours) + ' hrs billed in ' + num1(spend) + ' actual',
+              job.quality === 0 ? 'warn' : '',
+              { billed: progress, bayId: bay.id, techId: tech.id, start: start,
+                end: job.finishedAt, jobName: job.name });
+          } else if (spend > 0.05) {
+            mark(res, start + spend, 'work', job.name + ' left on the lift',
+              tech.name + ' got ' + num1(progress) + ' of ' + num1(job.bookHours) +
+              ' hours into it before the day ran out.', 'warn',
+              { billed: progress, bayId: bay.id, techId: tech.id, start: start,
+                end: start + spend, jobName: job.name, partial: true });
           }
         }
       }
@@ -781,35 +930,46 @@
       t.morale = clamp(t.morale + (techBilled[i] > 5 ? 0.012 : -0.010) - t.fatigue * 0.008, 0.2, 1);
     });
     state.bays.forEach(function (b, i) {
-      var avail = (b.readyDay > state.day || b.downUntil > state.day) ? 0 : hoursPerBay;
-      b.utilization = avail > 0 ? clamp((avail - bayHours[i]) / avail, 0, 1) : 0;
+      var span = bayFree[i] === Infinity ? 0 : shiftHours(state);
+      b.utilization = span > 0 ? clamp(bayUsed[i] / span, 0, 1) : 0;
     });
   }
 
-  function findBay(state, jobDef, bayHours) {
-    var best = -1, bestSpeed = 0;
+  /* The bay that can take this job soonest; ties go to the better-tooled one. */
+  function pickBay(state, jobDef, bayFree, earliest, close) {
+    var best = -1, bestStart = Infinity, bestSpeed = 0;
     for (var i = 0; i < state.bays.length; i++) {
-      if (bayHours[i] <= 0.01) continue;
+      if (bayFree[i] === Infinity) continue;
       var b = state.bays[i];
       if (jobDef.bays.indexOf(b.type) < 0) continue;
       var tags = bayTags(b);
       if (!jobDef.tags.every(function (t) { return tags[t]; })) continue;
+      var start = Math.max(earliest, bayFree[i]);
+      if (start >= close - 0.02) continue;
       var sp = baySpeed(b);
-      if (sp > bestSpeed) { bestSpeed = sp; best = i; }
+      if (start < bestStart - 0.01 || (Math.abs(start - bestStart) <= 0.01 && sp > bestSpeed)) {
+        bestStart = start; bestSpeed = sp; best = i;
+      }
     }
     return best;
   }
 
-  function findTech(state, jobDef, techHours) {
-    var best = -1, bestScore = -1;
+  /*
+   * The technician who can start soonest, trading a little waiting for a lot
+   * of skill: a master an hour from free beats a rookie who is free now.
+   */
+  function pickTech(state, jobDef, techFree, techEnd, earliest, bayStart) {
+    var best = -1, bestScore = Infinity;
     for (var i = 0; i < state.techs.length; i++) {
-      if (techHours[i] <= 0.01) continue;
+      if (techEnd[i] === -Infinity) continue;
       var t = state.techs[i];
       if (!jobDef.certs.every(function (c) { return t.certs.indexOf(c) >= 0; })) continue;
+      var start = Math.max(earliest, bayStart, techFree[i]);
+      if (start >= techEnd[i] - 0.02) continue;
       var skill = t.skills[jobDef.skill] || 1;
-      var score = skill * 2 + t.efficiency;
-      if (skill + 1 < jobDef.difficulty) score -= 4;   // last resort
-      if (score > bestScore) { bestScore = score; best = i; }
+      var score = start + (5 - skill) * 0.35;
+      if (skill + 1 < jobDef.difficulty) score += 2.5;   // last resort
+      if (score < bestScore) { bestScore = score; best = i; }
     }
     return best;
   }
@@ -847,6 +1007,8 @@
 
     state.openROs.forEach(function (ro) {
       var allDone = ro.jobs.every(function (j) { return j.done; });
+      var finishedAt = 0;
+      ro.jobs.forEach(function (j) { if (j.finishedAt > finishedAt) finishedAt = j.finishedAt; });
       if (!allDone) {
         // Turnaround itself is scored at delivery; this is the extra sting of
         // telling a customer their car is stuck waiting on a part.
@@ -897,6 +1059,11 @@
       res.cars++;
       res.completed++;
       state.stats.carsServed++;
+      mark(res, Math.max(finishedAt, SHOP_OPEN) + 0.25, 'deliver',
+        'Delivered to ' + ro.customer,
+        fmtMoney(labor + partsRev) + ' · ' + turnaround + ' day turnaround · satisfaction ' +
+        sat.toFixed(1) + '/5', sat >= 4.3 ? 'good' : sat <= 2.8 ? 'bad' : '',
+        { amount: labor + partsRev });
 
       // Reviews
       var reviewP = 0.16 + advisorAvg(state, 'csi') * 0.02 + (sat >= 4.7 ? 0.10 : 0) + (sat <= 2.5 ? 0.28 : 0);
@@ -905,6 +1072,12 @@
         state.reviewCount++;
         state.reputation = state.reputation + (stars - state.reputation) * (2.6 / (state.reviewCount + 12));
         res.reviews.push({ customer: ro.customer, stars: stars, sat: round2(sat) });
+        mark(res, Math.max(finishedAt, SHOP_OPEN) + 0.6, 'review',
+          stars.toFixed(1) + '-star review from ' + ro.customer,
+          stars >= 4.5 ? 'They told three friends.'
+            : stars >= 3.5 ? 'Polite, not enthusiastic.'
+              : 'This one is going to cost you.',
+          stars >= 4 ? 'good' : stars <= 2.5 ? 'bad' : '');
       }
       // Retention: happy customers become "your" customers.
       var retain = clamp((sat - 3.2) * 0.34 + advisorAvg(state, 'csi') * 0.04, -0.25, 0.55);
@@ -1009,8 +1182,10 @@
     state.history.push({
       day: res.day, revenue: res.revenue, net: res.net, cars: res.cars,
       gp: res.grossProfit, billed: res.billedHours, actual: res.actualHours,
-      cash: state.cash, rep: state.reputation, sold: res.sold, closed: res.closed, presented: res.presented,
+      cash: state.cash, rep: state.reputation, sold: res.sold, won: res.won, presented: res.presented,
       aro: res.cars ? res.revenue / res.cars : 0, adSpend: res.adSpend,
+      lostCall: res.turnedAwayCapacity, lostPark: res.turnedAwayParking,
+      lostCap: res.lostCapability, comebacks: res.comebacks,
       util: res.bayHoursAvail ? res.bayHoursUsed / res.bayHoursAvail : 0
     });
     if (state.history.length > 800) state.history.shift();
@@ -1019,7 +1194,7 @@
     var rev = 0, cars = 0, billed = 0, actual = 0, util = 0, closed = 0, pres = 0;
     last30.forEach(function (h) {
       rev += h.revenue; cars += h.cars; billed += h.billed; actual += h.actual;
-      util += h.util; closed += (h.closed || 0); pres += h.presented;
+      util += h.util; closed += (h.won || 0); pres += h.presented;
     });
     state.stats.revenue30 = rev / Math.max(1, last30.length) * 30;
     state.stats.aro30 = cars ? rev / cars : 0;
@@ -1120,6 +1295,7 @@
     if (chosen.choice) {
       state.pendingChoice = makeChoice(state, chosen);
       res.events.push({ name: chosen.name, text: chosen.text, choice: true });
+      mark(res, SHOP_OPEN + 0.05, 'event', chosen.name, chosen.text, 'warn');
       logLine(state, chosen.name + ': ' + chosen.text, 'event');
       return;
     }
@@ -1138,6 +1314,7 @@
       }
     }
     res.events.push({ name: chosen.name, text: chosen.text });
+    mark(res, SHOP_OPEN + 0.05, 'event', chosen.name, chosen.text, 'warn');
     logLine(state, chosen.name + ': ' + chosen.text, 'event');
   }
 
@@ -1475,6 +1652,10 @@
     newGame: newGame,
     runDay: runDay,
     forecast: forecast,
+    clock: clock,
+    sourceName: sourceName,
+    SHOP_OPEN: SHOP_OPEN,
+    shopClose: shopClose,
     channelLeads: channelLeads,
     menuCoverage: menuCoverage,
     calendar: calendar,

@@ -13,7 +13,7 @@ const root = __dirname;
 const read = (p) => fs.readFileSync(path.join(root, p), 'utf8');
 
 const css = read('styles.css');
-const js = ['js/data.js', 'js/engine.js', 'js/ui.js'].map(read).join('\n');
+const js = ['js/data.js', 'js/engine.js', 'js/advice.js', 'js/ui.js', 'js/screens.js'].map(read).join('\n');
 
 const FONTS = '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
   '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700' +

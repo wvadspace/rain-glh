@@ -97,15 +97,39 @@
   /* ---------------------------------------------------------------- *
    * Header
    * ---------------------------------------------------------------- */
-  function renderHeader() {
+  function renderHeader(office) {
     var s = UI.state;
     var cal = E.calendar(s.day);
+    var label = 'Day ' + s.day + ' — ' + cal.label;
+
+    /*
+     * The whole day is simulated the moment you unlock the door, so during
+     * playback the header has to be walked forward from a start-of-day
+     * snapshot — otherwise it quietly spoils the ending.
+     */
+    var cash = s.cash, debt = s.debt, rep = s.reputation, custs = s.customerBase;
     var onSite = E.carsOnSite(s);
+    if (UI.play && UI.play.snapshot) {
+      var snap = UI.play.snapshot;
+      var took = 0, gave = 0, collected = 0;
+      UI.play.res.timeline.forEach(function (e) {
+        if (e.t > UI.play.t) return;
+        if (e.kind === 'arrive') took++;
+        if (e.kind === 'deliver') { gave++; collected += e.amount || 0; }
+      });
+      cash = snap.cash + collected;
+      debt = snap.debt; rep = snap.rep; custs = snap.customers;
+      onSite = snap.onSite + took - gave;
+      label = 'Day ' + UI.play.res.day + ' — ' + UI.play.res.cal.label + ' · in progress';
+    } else if (s.phase === 'evening' && UI.lastResult) {
+      label = 'Day ' + UI.lastResult.day + ' — ' + UI.lastResult.cal.label + ' · closing out';
+    }
+
     var kpis = [
-      { k: 'Cash', v: money(s.cash), c: s.cash < 5000 ? 'bad' : s.cash < 15000 ? 'warn' : 'good' },
-      { k: 'Credit Line', v: money(s.debt) + ' / ' + money(D.FINANCE.creditLimit), c: s.debt > 40000 ? 'warn' : '' },
-      { k: 'Rating', v: '<span class="stars">' + stars(s.reputation) + '</span> ' + s.reputation.toFixed(2), c: '' },
-      { k: 'Customers', v: s.customerBase, c: '' },
+      { k: 'Cash', v: money(cash), c: cash < 5000 ? 'bad' : cash < 15000 ? 'warn' : 'good' },
+      { k: 'Credit Line', v: money(debt) + ' / ' + money(D.FINANCE.creditLimit), c: debt > 40000 ? 'warn' : '' },
+      { k: 'Rating', v: '<span class="stars">' + stars(rep) + '</span> ' + rep.toFixed(2), c: '' },
+      { k: 'Customers', v: custs, c: '' },
       { k: 'Cars On Lot', v: onSite + ' / ' + s.parking, c: onSite >= s.parking ? 'bad' : onSite > s.parking * 0.8 ? 'warn' : '' },
       { k: 'Bays', v: s.bays.length, c: '' },
       { k: 'Crew', v: s.techs.length + ' tech · ' + s.advisors.length + ' adv', c: '' },
@@ -115,7 +139,7 @@
     return '' +
       '<div class="brand">' +
         '<h1>Torque <span>&amp;</span> Turnover</h1>' +
-        '<div class="date">Day ' + s.day + ' — ' + cal.label + '</div>' +
+        '<div class="date">' + label + '</div>' +
         '<div class="spacer"></div>' +
         '<button class="btn sm ghost" data-act="save">Save</button>' +
         '<button class="btn sm ghost" data-act="load">Load</button>' +
@@ -125,125 +149,27 @@
       '<div class="kpis">' + kpis.map(function (k) {
         return '<div class="kpi"><div class="k">' + k.k + '</div><div class="v ' + k.c + '">' + k.v + '</div></div>';
       }).join('') + '</div>' +
-      '<nav class="tabs">' + [
+      (office ? '<nav class="tabs">' + [
         ['dash', 'Dashboard'], ['floor', 'Shop Floor'], ['crew', 'Crew & Training'],
         ['parts', 'Parts Room'], ['price', 'Pricing'], ['marketing', 'Marketing'],
         ['upgrades', 'Facility'], ['books', 'The Books']
       ].map(function (t) {
         return '<button data-act="tab" data-tab="' + t[0] + '" class="' +
-          (UI.tab === t[0] ? 'active' : '') + '">' + t[1] + '</button>';
-      }).join('') + '</nav>';
+          (office === t[0] ? 'active' : '') + '">' + t[1] + '</button>';
+      }).join('') + '</nav>' : '');
+  }
+
+  /* The running log, shown in the rail on every screen. */
+  function railLog(s) {
+    return '<div class="panel"><h2>Log</h2><div class="log">' +
+      s.log.slice(0, 40).map(function (l) {
+        return '<div class="' + l.kind + '"><b>D' + l.day + '</b>' + esc(l.text) + '</div>';
+      }).join('') + '</div></div>';
   }
 
   /* ---------------------------------------------------------------- *
    * Right rail: today's plan
    * ---------------------------------------------------------------- */
-  function alerts() {
-    var s = UI.state, out = [];
-    var onSite = E.carsOnSite(s);
-    if (s.cash < 6000) out.push(['bad', 'Cash is thin (' + money(s.cash) + '). Watch your parts orders.']);
-    if (onSite >= s.parking) out.push(['bad', 'The lot is full. You are turning cars away at the door.']);
-    else if (onSite > s.parking * 0.8) out.push(['', 'Lot is ' + pct(onSite / s.parking) + ' full. Consider paving more parking.']);
-
-    var f = E.forecast(s);
-    if (f.opportunities > f.advisorCapacity * 1.15) {
-      out.push(['', 'Expected calls (' + num(f.opportunities, 0) + ') exceed advisor capacity (' +
-        num(f.advisorCapacity, 0) + '). Those calls go to voicemail.']);
-    }
-    var techHours = s.techs.reduce(function (a, t) {
-      return a + (t.trainingUntil > s.day ? 0 : t.scheduledHours);
-    }, 0);
-    if (techHours === 0 && s.techs.length) out.push(['bad', 'Nobody is scheduled to turn a wrench today.']);
-
-    var sug = E.suggestOrder(s, 3);
-    var shortOf = sug.filter(function (x) { return x.order > 0 && x.have < x.want * 0.4; });
-    if (shortOf.length) {
-      out.push(['', 'Low stock: ' + shortOf.map(function (x) { return x.name; }).join(', ') +
-        '. Running out means paying hot-shot prices.']);
-    }
-    s.construction.forEach(function (c) {
-      out.push(['info', c.label + ' ready in ' + (c.readyDay - s.day) + ' day(s).']);
-    });
-    s.bays.forEach(function (b) {
-      if (b.downUntil > s.day) out.push(['bad', b.name + ' is down until day ' + b.downUntil + '.']);
-    });
-    s.techs.forEach(function (t) {
-      if (t.trainingUntil > s.day) out.push(['info', t.name + ' is in ' + t.trainingName + ' until day ' + t.trainingUntil + '.']);
-    });
-    if (s.coverageHint) out.push(['', s.coverageHint]);
-    return out;
-  }
-
-  function renderRail() {
-    var s = UI.state;
-    var f = E.forecast(s);
-    var cal = f.cal;
-    var closed = cal.dow === 6;
-    var al = alerts();
-
-    var sources = [
-      ['Walk-in / drive-by', f.organic],
-      ['Repeat customers', f.loyal]
-    ].concat(f.paid.filter(function (p) { return p.leads > 0.05; }).map(function (p) {
-      return [p.name.replace(/ \(.*\)/, ''), p.leads];
-    }));
-
-    var techHours = s.techs.reduce(function (a, t) {
-      return a + (t.trainingUntil > s.day ? 0 : t.scheduledHours);
-    }, 0);
-    var bayHours = s.bays.filter(function (b) {
-      return b.readyDay <= s.day && b.downUntil <= s.day;
-    }).length * E.shiftHours(s);
-
-    var html = '<div class="panel">' +
-      '<h2>' + (closed ? 'Sunday — Closed' : 'Today&rsquo;s Outlook') + '</h2>' +
-      '<p class="sub">' + cal.label + ' · ' + cal.season + '</p>';
-
-    if (closed) {
-      html += '<p class="small muted">The shop is closed. Fixed costs still run about ' +
-        money(E.dailyFixedCost(s)) + '. Use the day to plan.</p>';
-    } else {
-      html += '<table><tr><th>Expected Opportunities</th><th class="num">' + num(f.opportunities, 1) + '</th></tr>' +
-        sources.map(function (r) {
-          return '<tr class="dim"><td style="padding-left:14px">' + esc(r[0]) + '</td><td class="num">' + num(r[1], 1) + '</td></tr>';
-        }).join('') +
-        '<tr><td>Advisor capacity</td><td class="num ' + (f.advisorCapacity < f.opportunities ? 'neg' : '') + '">' +
-          num(f.advisorCapacity, 0) + '</td></tr>' +
-        '<tr><td>Est. closing ratio</td><td class="num">' + pct(f.closeRate) + '</td></tr>' +
-        '<tr><td>Labor hours available</td><td class="num">' + num(Math.min(techHours, bayHours), 0) + '</td></tr>' +
-        '<tr><td>Service menu coverage</td><td class="num">' + pct(f.coverage) + '</td></tr>' +
-        '</table>' +
-        '<p class="small muted" style="margin-top:8px">Demand factor from day of week ' +
-        num(f.dowMult, 2) + '× · season ' + num(f.monthMult, 2) + '× · reputation ' +
-        num(f.repMult, 2) + '× · events ' + num(f.eventMult, 2) + '×</p>';
-    }
-    html += '</div>';
-
-    html += '<div class="panel">' +
-      '<button class="btn primary run" data-act="runday">' +
-        (closed ? 'Skip Sunday' : 'Open The Shop') + '</button>' +
-      '<div class="row" style="margin-top:8px">' +
-        '<button class="btn ghost sm" style="flex:1" data-act="runweek">Run 6 Days</button>' +
-        '<button class="btn ghost sm" style="flex:1" data-act="runmonth">Run 30 Days</button>' +
-      '</div>' +
-      '<p class="small muted" style="margin:8px 0 0">Fast-forward keeps today&rsquo;s prices, ad budget and ' +
-      'schedule, and auto-orders parts to a 7-day target.</p>' +
-    '</div>';
-
-    if (al.length) {
-      html += '<div class="panel"><h2>Shop Notes</h2>' +
-        al.map(function (a) { return '<div class="alert ' + a[0] + '">' + esc(a[1]) + '</div>'; }).join('') +
-        '</div>';
-    }
-
-    html += '<div class="panel"><h2>Log</h2><div class="log">' +
-      s.log.slice(0, 40).map(function (l) {
-        return '<div class="' + l.kind + '"><b>D' + l.day + '</b>' + esc(l.text) + '</div>';
-      }).join('') + '</div></div>';
-
-    return html;
-  }
-
   /* ---------------------------------------------------------------- *
    * Tab: Dashboard
    * ---------------------------------------------------------------- */
@@ -1071,25 +997,11 @@
   /* ---------------------------------------------------------------- *
    * Render
    * ---------------------------------------------------------------- */
-  function render() {
-    var s = UI.state;
-    document.getElementById('header').innerHTML = renderHeader();
-    var body = { dash: tabDash, floor: tabFloor, crew: tabCrew, parts: tabParts,
-      price: tabPrice, marketing: tabMarketing, upgrades: tabUpgrades, books: tabBooks }[UI.tab];
-    document.getElementById('body').innerHTML = body ? body() : '';
-    document.getElementById('rail').innerHTML = renderRail();
-    if (s.gameOver && !UI.modal) {
-      showModal('Out Of Business — Day ' + s.gameOver.day,
-        '<p>' + esc(s.gameOver.reason) + '</p>' +
-        '<p class="muted">You served ' + s.stats.carsServed + ' cars and booked ' +
-        money(s.stats.revenueTotal) + ' in sales along the way.</p>',
-        '<button class="btn primary" data-act="newgame">Start over</button>', false);
-    }
-  }
+  function render() { root.AutoShopScreens.render(); }
 
+  /* Live-updating a slider should not blow away the field you are dragging. */
   function softRefresh() {
-    document.getElementById('header').innerHTML = renderHeader();
-    document.getElementById('rail').innerHTML = renderRail();
+    document.getElementById('header').innerHTML = renderHeader(UI.office);
   }
 
   /* ---------------------------------------------------------------- *
@@ -1114,25 +1026,30 @@
       if (s.pendingChoice) break;
     }
     UI.lastResult = last || UI.lastResult;
-    render();
-    if (s.pendingChoice) choiceModal();
-    else if (last && n === 1) dayReport(last);
-    else if (last) {
-      toast('Ran ' + n + ' days. Cash ' + money(s.cash) + '.');
+    if (s.pendingChoice) { render(); choiceModal(); }
+    else {
+      render();
+      if (last) toast('Ran ' + n + ' day(s). Cash ' + money(s.cash) + '.');
     }
     save(true);
   }
 
   var ACTIONS = {
-    tab: function (el) { UI.tab = el.getAttribute('data-tab'); render(); window.scrollTo(0, 0); },
-    runday: function () { runDays(1); },
-    runweek: function () { runDays(6); },
-    runmonth: function () { runDays(30); },
     closemodal: function () { closeModal(); render(); },
     help: function () { helpModal(); },
     choice: function (el) {
       E.resolveChoice(UI.state, el.getAttribute('data-key'));
       closeModal(); render();
+    },
+    orderrec: function () {
+      var r = root.AutoShopAdvice.parts(UI.state, 7), ok = 0, fail = null;
+      r.rows.forEach(function (row) {
+        if (row.order <= 0) return;
+        var res = E.orderParts(UI.state, row.cat, row.order);
+        if (res.ok) ok++; else fail = res.msg;
+      });
+      render();
+      toast(fail || ('Ordered ' + ok + ' line(s) for ' + money(r.total) + '.'), !!fail);
     },
     order: function (el) {
       var cat = el.getAttribute('data-cat');
@@ -1270,6 +1187,14 @@
     } else {
       UI.state = E.newGame();
     }
+    // Saves from before the day was split into three acts land on the morning.
+    if (!UI.state.phase) UI.state.phase = 'morning';
+    if (UI.state.step === undefined) UI.state.step = 0;
+    if (UI.state.phase === 'day') UI.state.phase = 'morning';
+
+    root.AutoShopScreens.attach(UI);
+    root.AutoShopScreens.registerActions(ACTIONS);
+
     document.addEventListener('click', onClick);
     document.addEventListener('input', onInput);
     document.addEventListener('change', onChange);
@@ -1277,6 +1202,28 @@
     render();
     if (!raw) helpModal();
   }
+
+  UI.h = {
+    esc: esc, money: money, money2: money2, pct: pct, num: num, stars: stars,
+    pips: pips, bar: bar, tile: tile, spark: spark, plTable: plTable
+  };
+  UI.tabs = {
+    dash: tabDash, floor: tabFloor, crew: tabCrew, parts: tabParts,
+    price: tabPrice, marketing: tabMarketing, upgrades: tabUpgrades, books: tabBooks
+  };
+  UI.ACTIONS = ACTIONS;
+  UI.renderHeader = renderHeader;
+  UI.railLog = railLog;
+  UI.showModal = showModal;
+  UI.closeModal = closeModal;
+  UI.choiceModal = choiceModal;
+  UI.helpModal = helpModal;
+  UI.toast = toast;
+  UI.save = save;
+  UI.runDays = runDays;
+  UI.office = null;
+  UI.play = null;
+  UI.adLevel = 'standard';
 
   root.AutoShopUI = UI;
   UI.boot = boot;
