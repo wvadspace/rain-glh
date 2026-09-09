@@ -46,6 +46,28 @@
     return '<div class="bar"><i class="' + (cls || '') + '" style="width:' + (f * 100).toFixed(1) + '%"></i></div>';
   }
 
+  /*
+   * Dense tables (the parts room runs eight columns) should scroll inside
+   * their own container rather than crushing every column to nothing or
+   * pushing the whole page sideways. Applied after render so every screen
+   * gets it, including the Office, without touching each call site.
+   */
+  function wrapTables(container) {
+    if (!container) return;
+    var tables = container.querySelectorAll('table');
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      if (t.parentNode && t.parentNode.className === 'scroller') continue;
+      if (t.className.indexOf('pl') >= 0) continue;      // the P&L is two columns
+      var cols = t.rows.length ? t.rows[0].cells.length : 2;
+      if (cols >= 4) t.style.minWidth = Math.min(cols * 116, 880) + 'px';
+      var wrap = document.createElement('div');
+      wrap.className = 'scroller';
+      t.parentNode.insertBefore(wrap, t);
+      wrap.appendChild(t);
+    }
+  }
+
   function toast(msg, bad) {
     var el = document.getElementById('toast');
     el.textContent = msg;
@@ -141,10 +163,12 @@
         '<h1>Torque <span>&amp;</span> Turnover</h1>' +
         '<div class="date">' + label + '</div>' +
         '<div class="spacer"></div>' +
-        '<button class="btn sm ghost" data-act="save">Save</button>' +
-        '<button class="btn sm ghost" data-act="load">Load</button>' +
-        '<button class="btn sm ghost" data-act="newgame">New Game</button>' +
-        '<button class="btn sm ghost" data-act="help">How To Play</button>' +
+        '<div class="brandbtns">' +
+          '<button class="btn sm ghost" data-act="save">Save</button>' +
+          '<button class="btn sm ghost" data-act="load">Load</button>' +
+          '<button class="btn sm ghost" data-act="newgame">New Game</button>' +
+          '<button class="btn sm ghost" data-act="help">How To Play</button>' +
+        '</div>' +
       '</div>' +
       '<div class="kpis">' + kpis.map(function (k) {
         return '<div class="kpi"><div class="k">' + k.k + '</div><div class="v ' + k.c + '">' + k.v + '</div></div>';
@@ -329,7 +353,8 @@
     html += '<div class="panel"><h2>Service Menu</h2>' +
       '<p class="sub">Work you cannot perform is work the town stops calling you about. Coverage drives ' +
       'how many opportunities reach your phone.</p>' +
-      '<table><tr><th>Job</th><th class="num">Book Hrs</th><th class="num">Sells For</th><th>Needs</th><th>Status</th></tr>' +
+      '<table><tr><th>Job</th><th class="num">Book Hrs</th><th class="num">Sells For</th>' +
+      '<th class="col-why">Needs</th><th>Status</th></tr>' +
       D.JOBS.map(function (j) {
         var c = caps[j.key];
         var labor = E.DIAG_BILLED[j.key]
@@ -348,7 +373,7 @@
         return '<tr' + (c.ok ? '' : ' class="dim"') + '><td>' + esc(j.name) + '</td>' +
           '<td class="num">' + num(j.bookHours) + '</td>' +
           '<td class="num">' + money(labor + partsRetail) + '</td>' +
-          '<td class="small muted">' + esc(need) + '</td>' +
+          '<td class="small muted col-why">' + esc(need) + '</td>' +
           '<td>' + (c.ok ? '<span class="tag ok">Available</span>'
             : !c.bay ? '<span class="tag no">No tooling</span>'
               : '<span class="tag warn">No certified tech</span>') + '</td></tr>';
@@ -525,8 +550,10 @@
     html += '<div class="panel"><h2>Inventory &amp; Ordering</h2>' +
       '<p class="sub">The suggested column covers seven days of expected demand at your current close ' +
       'rate, with a cushion for upsells.</p>' +
-      '<table><tr><th>Category</th><th class="num">On Hand</th><th class="num">Inbound</th>' +
-      '<th class="num">7-Day Need</th><th class="num">Unit Cost</th><th class="num">Retail</th>' +
+      '<table><tr><th>Category</th><th class="num">On Hand</th>' +
+      '<th class="num col-secondary">Inbound</th>' +
+      '<th class="num">7-Day Need</th><th class="num col-secondary">Unit Cost</th>' +
+      '<th class="num col-secondary">Retail</th>' +
       '<th class="num">Order</th><th></th></tr>' +
       sug.map(function (row) {
         var cat = D.partByKey[row.cat];
@@ -536,10 +563,10 @@
         return '<tr><td><div>' + esc(cat.name) + '</div>' +
           '<div class="small muted">' + esc(cat.note) + '</div></td>' +
           '<td class="num ' + (low ? 'neg' : '') + '">' + row.have + '</td>' +
-          '<td class="num muted">' + (row.coming || '—') + '</td>' +
+          '<td class="num muted col-secondary">' + (row.coming || '—') + '</td>' +
           '<td class="num">' + row.want + '</td>' +
-          '<td class="num">' + money2(unit) + '</td>' +
-          '<td class="num muted">' + money2(retail) + '</td>' +
+          '<td class="num col-secondary">' + money2(unit) + '</td>' +
+          '<td class="num muted col-secondary">' + money2(retail) + '</td>' +
           '<td class="num"><input type="number" min="0" step="1" value="' + row.order +
             '" data-role="qty" data-cat="' + row.cat + '" style="width:80px"></td>' +
           '<td><button class="btn sm" data-act="order" data-cat="' + row.cat + '">Order</button></td></tr>';
@@ -831,14 +858,15 @@
       }
       html += '<div class="panel"><h2>By Week</h2><table>' +
         '<tr><th>Week</th><th class="num">Sales</th><th class="num">Net</th><th class="num">Cars</th>' +
-        '<th class="num">ARO</th><th class="num">Ad Spend</th><th class="num">Ad % of Sales</th></tr>' +
+        '<th class="num">ARO</th><th class="num col-secondary">Ad Spend</th>' +
+        '<th class="num col-secondary">Ad % of Sales</th></tr>' +
         byWeek.slice(-16).reverse().map(function (w) {
           return '<tr><td>' + w.week + '</td><td class="num">' + money(w.revenue) + '</td>' +
             '<td class="num ' + (w.net >= 0 ? 'pos' : 'neg') + '">' + money(w.net) + '</td>' +
             '<td class="num">' + w.cars + '</td>' +
             '<td class="num">' + (w.cars ? money(w.revenue / w.cars) : '—') + '</td>' +
-            '<td class="num">' + money(w.ads) + '</td>' +
-            '<td class="num">' + (w.revenue ? pct(w.ads / w.revenue) : '—') + '</td></tr>';
+            '<td class="num col-secondary">' + money(w.ads) + '</td>' +
+            '<td class="num col-secondary">' + (w.revenue ? pct(w.ads / w.revenue) : '—') + '</td></tr>';
         }).join('') + '</table></div>';
     }
 
@@ -1214,6 +1242,7 @@
   UI.ACTIONS = ACTIONS;
   UI.renderHeader = renderHeader;
   UI.railLog = railLog;
+  UI.wrapTables = wrapTables;
   UI.showModal = showModal;
   UI.closeModal = closeModal;
   UI.choiceModal = choiceModal;

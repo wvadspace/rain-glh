@@ -252,20 +252,24 @@
       '<p class="sub">Work you sold and cannot start is a car sitting in a parking space with an ' +
       'unhappy owner. The recommended column covers seven days at your current pace, with a cushion ' +
       'for upsells.</p>' +
-      '<table><tr><th>Category</th><th class="num">On Hand</th><th class="num">Inbound</th>' +
-      '<th class="num">Recommended</th><th class="num">Cost</th><th>Why</th><th class="num">Order</th></tr>' +
+      '<table><tr><th>Category</th><th class="num">On Hand</th>' +
+      '<th class="num col-secondary">Inbound</th>' +
+      '<th class="num">Recommended</th><th class="num col-secondary">Cost</th>' +
+      '<th class="col-why">Why</th><th class="num">Order</th></tr>' +
       r.rows.map(function (row) {
         var cat = D.partByKey[row.cat];
         var low = row.have + row.coming < row.want * 0.5;
         return '<tr><td><div>' + h.esc(cat.name) + '</div>' +
-          '<div class="small muted">' + h.esc(cat.note) + '</div></td>' +
+          '<div class="small muted">' + h.esc(cat.note) + '</div>' +
+          '<div class="small muted whyfold">' + h.esc(row.why) +
+            (row.cost ? ' · ' + h.money(row.cost) : '') + '</div></td>' +
           '<td class="num ' + (low ? 'neg' : '') + '">' + row.have + '</td>' +
-          '<td class="num muted">' + (row.coming || '—') + '</td>' +
+          '<td class="num muted col-secondary">' + (row.coming || '—') + '</td>' +
           '<td class="num"><b>' + row.order + '</b></td>' +
-          '<td class="num">' + (row.cost ? h.money(row.cost) : '—') + '</td>' +
-          '<td class="small muted">' + h.esc(row.why) + '</td>' +
+          '<td class="num col-secondary">' + (row.cost ? h.money(row.cost) : '—') + '</td>' +
+          '<td class="small muted col-why">' + h.esc(row.why) + '</td>' +
           '<td class="num"><input type="number" min="0" step="1" value="' + row.order +
-            '" data-role="qty" data-cat="' + row.cat + '" style="width:76px"></td></tr>';
+            '" data-role="qty" data-cat="' + row.cat + '" style="width:70px"></td></tr>';
       }).join('') + '</table>' +
       '<div class="row" style="margin-top:12px">' +
         '<button class="btn primary" data-act="orderall">Order everything recommended · ' +
@@ -666,6 +670,9 @@
         rail.innerHTML = UI.railLog(state);
       }
     }
+
+    UI.wrapTables(body);
+    UI.wrapTables(rail);
 
     if (state.gameOver && !UI.modal) {
       UI.showModal('Out Of Business — Day ' + state.gameOver.day,

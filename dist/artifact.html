@@ -392,6 +392,56 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
   display: flex; align-items: center; gap: 14px; margin-bottom: 14px; flex-wrap: wrap;
 }
 
+/* ================= narrow viewports ================= */
+/*
+ * Wide tables scroll inside their own container; the page body never does.
+ */
+.scroller { overflow-x: auto; overflow-y: hidden; max-width: 100%; }
+.scroller table { width: 100%; }
+
+/* Grid and flex children default to min-width:auto, which lets long words and
+ * wide tables push a track wider than its share. Pin them to zero. */
+.main > *, .grid > *, .bays > *, .levels > *, .spread > *, .row > * { min-width: 0; }
+.card, .panel, .baycard { overflow-wrap: anywhere; }
+
+/* Columns that are nice-to-have rather than load-bearing step aside first. */
+@media (max-width: 900px) {
+  .col-why { display: none; }
+}
+@media (max-width: 700px) {
+  .col-secondary { display: none; }
+  .phases .phase span { display: none; }
+  .phases .phase { padding: 7px 10px; }
+  .stepnav { flex-direction: column-reverse; align-items: stretch; }
+  .stepnav .btn { width: 100%; }
+  .dayhead .spread { flex-direction: column; align-items: flex-start; }
+  .playctl { width: 100%; }
+  .brand h1 { font-size: 22px; }
+  .kpi { min-width: 0; flex: 1 1 108px; }
+}
+@media (max-width: 560px) {
+  .app { padding: 0 10px 48px; }
+  .panel { padding: 12px; }
+  .levels { grid-template-columns: 1fr 1fr; }
+  .bays { grid-template-columns: 1fr; }
+  .feed .fe { grid-template-columns: 62px 1fr; gap: 8px; }
+  .hero-h { font-size: 23px; }
+  .dayhead .bigclock { font-size: 30px; }
+}
+/* The folded reasoning only appears once its own column is gone. */
+.whyfold { display: none; }
+@media (max-width: 900px) { .whyfold { display: block; color: var(--accent2); } }
+
+/* Header controls stay one group, so wrapping moves them as a block. */
+.brandbtns { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+
+/*
+ * The Office drops the rail and would otherwise run 1500px of prose edge to
+ * edge. Cap the column, and cap running text at a readable measure.
+ */
+.main.office { max-width: 1180px; margin-left: auto; margin-right: auto; }
+.panel > .sub, .coach-body, .issue p, .rec-why, details.help p { max-width: 74ch; }
+
 </style>
 <div class="app">
   <header class="top" id="header"></header>
@@ -3072,6 +3122,28 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
     return '<div class="bar"><i class="' + (cls || '') + '" style="width:' + (f * 100).toFixed(1) + '%"></i></div>';
   }
 
+  /*
+   * Dense tables (the parts room runs eight columns) should scroll inside
+   * their own container rather than crushing every column to nothing or
+   * pushing the whole page sideways. Applied after render so every screen
+   * gets it, including the Office, without touching each call site.
+   */
+  function wrapTables(container) {
+    if (!container) return;
+    var tables = container.querySelectorAll('table');
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      if (t.parentNode && t.parentNode.className === 'scroller') continue;
+      if (t.className.indexOf('pl') >= 0) continue;      // the P&L is two columns
+      var cols = t.rows.length ? t.rows[0].cells.length : 2;
+      if (cols >= 4) t.style.minWidth = Math.min(cols * 116, 880) + 'px';
+      var wrap = document.createElement('div');
+      wrap.className = 'scroller';
+      t.parentNode.insertBefore(wrap, t);
+      wrap.appendChild(t);
+    }
+  }
+
   function toast(msg, bad) {
     var el = document.getElementById('toast');
     el.textContent = msg;
@@ -3167,10 +3239,12 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
         '<h1>Torque <span>&amp;</span> Turnover</h1>' +
         '<div class="date">' + label + '</div>' +
         '<div class="spacer"></div>' +
-        '<button class="btn sm ghost" data-act="save">Save</button>' +
-        '<button class="btn sm ghost" data-act="load">Load</button>' +
-        '<button class="btn sm ghost" data-act="newgame">New Game</button>' +
-        '<button class="btn sm ghost" data-act="help">How To Play</button>' +
+        '<div class="brandbtns">' +
+          '<button class="btn sm ghost" data-act="save">Save</button>' +
+          '<button class="btn sm ghost" data-act="load">Load</button>' +
+          '<button class="btn sm ghost" data-act="newgame">New Game</button>' +
+          '<button class="btn sm ghost" data-act="help">How To Play</button>' +
+        '</div>' +
       '</div>' +
       '<div class="kpis">' + kpis.map(function (k) {
         return '<div class="kpi"><div class="k">' + k.k + '</div><div class="v ' + k.c + '">' + k.v + '</div></div>';
@@ -3355,7 +3429,8 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
     html += '<div class="panel"><h2>Service Menu</h2>' +
       '<p class="sub">Work you cannot perform is work the town stops calling you about. Coverage drives ' +
       'how many opportunities reach your phone.</p>' +
-      '<table><tr><th>Job</th><th class="num">Book Hrs</th><th class="num">Sells For</th><th>Needs</th><th>Status</th></tr>' +
+      '<table><tr><th>Job</th><th class="num">Book Hrs</th><th class="num">Sells For</th>' +
+      '<th class="col-why">Needs</th><th>Status</th></tr>' +
       D.JOBS.map(function (j) {
         var c = caps[j.key];
         var labor = E.DIAG_BILLED[j.key]
@@ -3374,7 +3449,7 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
         return '<tr' + (c.ok ? '' : ' class="dim"') + '><td>' + esc(j.name) + '</td>' +
           '<td class="num">' + num(j.bookHours) + '</td>' +
           '<td class="num">' + money(labor + partsRetail) + '</td>' +
-          '<td class="small muted">' + esc(need) + '</td>' +
+          '<td class="small muted col-why">' + esc(need) + '</td>' +
           '<td>' + (c.ok ? '<span class="tag ok">Available</span>'
             : !c.bay ? '<span class="tag no">No tooling</span>'
               : '<span class="tag warn">No certified tech</span>') + '</td></tr>';
@@ -3551,8 +3626,10 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
     html += '<div class="panel"><h2>Inventory &amp; Ordering</h2>' +
       '<p class="sub">The suggested column covers seven days of expected demand at your current close ' +
       'rate, with a cushion for upsells.</p>' +
-      '<table><tr><th>Category</th><th class="num">On Hand</th><th class="num">Inbound</th>' +
-      '<th class="num">7-Day Need</th><th class="num">Unit Cost</th><th class="num">Retail</th>' +
+      '<table><tr><th>Category</th><th class="num">On Hand</th>' +
+      '<th class="num col-secondary">Inbound</th>' +
+      '<th class="num">7-Day Need</th><th class="num col-secondary">Unit Cost</th>' +
+      '<th class="num col-secondary">Retail</th>' +
       '<th class="num">Order</th><th></th></tr>' +
       sug.map(function (row) {
         var cat = D.partByKey[row.cat];
@@ -3562,10 +3639,10 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
         return '<tr><td><div>' + esc(cat.name) + '</div>' +
           '<div class="small muted">' + esc(cat.note) + '</div></td>' +
           '<td class="num ' + (low ? 'neg' : '') + '">' + row.have + '</td>' +
-          '<td class="num muted">' + (row.coming || '—') + '</td>' +
+          '<td class="num muted col-secondary">' + (row.coming || '—') + '</td>' +
           '<td class="num">' + row.want + '</td>' +
-          '<td class="num">' + money2(unit) + '</td>' +
-          '<td class="num muted">' + money2(retail) + '</td>' +
+          '<td class="num col-secondary">' + money2(unit) + '</td>' +
+          '<td class="num muted col-secondary">' + money2(retail) + '</td>' +
           '<td class="num"><input type="number" min="0" step="1" value="' + row.order +
             '" data-role="qty" data-cat="' + row.cat + '" style="width:80px"></td>' +
           '<td><button class="btn sm" data-act="order" data-cat="' + row.cat + '">Order</button></td></tr>';
@@ -3857,14 +3934,15 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
       }
       html += '<div class="panel"><h2>By Week</h2><table>' +
         '<tr><th>Week</th><th class="num">Sales</th><th class="num">Net</th><th class="num">Cars</th>' +
-        '<th class="num">ARO</th><th class="num">Ad Spend</th><th class="num">Ad % of Sales</th></tr>' +
+        '<th class="num">ARO</th><th class="num col-secondary">Ad Spend</th>' +
+        '<th class="num col-secondary">Ad % of Sales</th></tr>' +
         byWeek.slice(-16).reverse().map(function (w) {
           return '<tr><td>' + w.week + '</td><td class="num">' + money(w.revenue) + '</td>' +
             '<td class="num ' + (w.net >= 0 ? 'pos' : 'neg') + '">' + money(w.net) + '</td>' +
             '<td class="num">' + w.cars + '</td>' +
             '<td class="num">' + (w.cars ? money(w.revenue / w.cars) : '—') + '</td>' +
-            '<td class="num">' + money(w.ads) + '</td>' +
-            '<td class="num">' + (w.revenue ? pct(w.ads / w.revenue) : '—') + '</td></tr>';
+            '<td class="num col-secondary">' + money(w.ads) + '</td>' +
+            '<td class="num col-secondary">' + (w.revenue ? pct(w.ads / w.revenue) : '—') + '</td></tr>';
         }).join('') + '</table></div>';
     }
 
@@ -4240,6 +4318,7 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
   UI.ACTIONS = ACTIONS;
   UI.renderHeader = renderHeader;
   UI.railLog = railLog;
+  UI.wrapTables = wrapTables;
   UI.showModal = showModal;
   UI.closeModal = closeModal;
   UI.choiceModal = choiceModal;
@@ -4510,20 +4589,24 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
       '<p class="sub">Work you sold and cannot start is a car sitting in a parking space with an ' +
       'unhappy owner. The recommended column covers seven days at your current pace, with a cushion ' +
       'for upsells.</p>' +
-      '<table><tr><th>Category</th><th class="num">On Hand</th><th class="num">Inbound</th>' +
-      '<th class="num">Recommended</th><th class="num">Cost</th><th>Why</th><th class="num">Order</th></tr>' +
+      '<table><tr><th>Category</th><th class="num">On Hand</th>' +
+      '<th class="num col-secondary">Inbound</th>' +
+      '<th class="num">Recommended</th><th class="num col-secondary">Cost</th>' +
+      '<th class="col-why">Why</th><th class="num">Order</th></tr>' +
       r.rows.map(function (row) {
         var cat = D.partByKey[row.cat];
         var low = row.have + row.coming < row.want * 0.5;
         return '<tr><td><div>' + h.esc(cat.name) + '</div>' +
-          '<div class="small muted">' + h.esc(cat.note) + '</div></td>' +
+          '<div class="small muted">' + h.esc(cat.note) + '</div>' +
+          '<div class="small muted whyfold">' + h.esc(row.why) +
+            (row.cost ? ' · ' + h.money(row.cost) : '') + '</div></td>' +
           '<td class="num ' + (low ? 'neg' : '') + '">' + row.have + '</td>' +
-          '<td class="num muted">' + (row.coming || '—') + '</td>' +
+          '<td class="num muted col-secondary">' + (row.coming || '—') + '</td>' +
           '<td class="num"><b>' + row.order + '</b></td>' +
-          '<td class="num">' + (row.cost ? h.money(row.cost) : '—') + '</td>' +
-          '<td class="small muted">' + h.esc(row.why) + '</td>' +
+          '<td class="num col-secondary">' + (row.cost ? h.money(row.cost) : '—') + '</td>' +
+          '<td class="small muted col-why">' + h.esc(row.why) + '</td>' +
           '<td class="num"><input type="number" min="0" step="1" value="' + row.order +
-            '" data-role="qty" data-cat="' + row.cat + '" style="width:76px"></td></tr>';
+            '" data-role="qty" data-cat="' + row.cat + '" style="width:70px"></td></tr>';
       }).join('') + '</table>' +
       '<div class="row" style="margin-top:12px">' +
         '<button class="btn primary" data-act="orderall">Order everything recommended · ' +
@@ -4924,6 +5007,9 @@ details.help p { color: var(--dim); font-size: 12.5px; margin: 6px 0 0; }
         rail.innerHTML = UI.railLog(state);
       }
     }
+
+    UI.wrapTables(body);
+    UI.wrapTables(rail);
 
     if (state.gameOver && !UI.modal) {
       UI.showModal('Out Of Business — Day ' + state.gameOver.day,
